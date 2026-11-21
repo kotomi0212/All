@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="視覚刺激に対する2リンク倒立振子の交差応答を、力学結合と制御結合に分けて体験するシミュレーター">
+  <title>からだの連鎖 — 姿勢応答ラボ</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <p class="eyebrow">INTERACTIVE POSTURE LAB</p>
+    <h1>足首が動くと、<br><em>なぜ腰も動く？</em></h1>
+    <p class="lead">視界の揺れをきっかけに、2つの関節がどう連鎖するか。身体そのものの「つながり」と、神経系の「助け合い」を並べて観察します。</p>
+    <a href="#lab" class="start">実験をはじめる ↓</a>
+  </header>
+
+  <main>
+    <section id="lab" class="lab">
+      <div class="section-title"><span>01 / 動かす</span><h2>同じ視覚刺激、違う結合</h2><p>黄色い縦線が視覚環境です。身体へ直接力を加えているわけではありません。</p></div>
+
+      <div class="controls" aria-label="シミュレーション操作">
+        <div class="transport">
+          <button id="play" class="primary">一時停止</button><button id="reset">リセット</button><button id="defaults">初期値に戻す</button>
+        </div>
+        <label>刺激周波数 <output id="freqOut">0.40 Hz</output><input id="frequency" type="range" min="0.1" max="2" step="0.01" value="0.4"></label>
+        <label>刺激振幅 <output id="ampOut">2.0°</output><input id="amplitude" type="range" min="0.2" max="5" step="0.1" value="2"></label>
+        <label>動きの表示倍率 <output id="scaleOut">8×</output><input id="motionScale" type="range" min="1" max="20" step="1" value="8"></label>
+        <div class="switches">
+          <label class="switch"><input id="controlCoupling" type="checkbox" checked><span></span>モデルBの制御結合</label>
+          <label class="switch"><input id="inertiaCoupling" type="checkbox" checked><span></span>慣性結合</label>
+        </div>
+      </div>
+
+      <div class="preset-panel">
+        <div class="preset-heading"><div><span>おすすめ実験</span><h3>見たい運動から選ぶ</h3></div><p id="presetExplanation">まずは「力学的な交差応答」を選び、慣性結合だけで股関節が動く様子を見てください。</p></div>
+        <div class="preset-grid">
+          <button data-preset="mechanics"><b>01　力学的な交差応答</b><small>0.8 Hz｜制御結合OFF<br>足入力だけでも股関節が動く</small></button>
+          <button data-preset="slow"><b>02　ゆっくり一体で揺れる</b><small>0.2 Hz｜標準設定<br>脚と上体がほぼ一緒に動く</small></button>
+          <button data-preset="control"><b>03　制御結合の差を見る</b><small>0.8 Hz｜交差制御150%<br>A/Bのゲインと位相が分かれる</small></button>
+          <button data-preset="hip"><b>04　股関節運動が目立つ</b><small>1.4 Hz｜交差制御130%<br>脚と上体の相対角が大きくなる</small></button>
+        </div>
+      </div>
+
+      <details class="advanced-controls"><summary>詳細パラメータ（推奨実験のあとに試す）</summary><div class="advanced-grid">
+        <label>受動的な弾性・粘性 <output id="passiveOut">100%</output><input id="passiveScale" type="range" min="0.8" max="1.4" step="0.05" value="1"></label>
+        <label>各関節の独立安定化 <output id="selfOut">100%</output><input id="selfScale" type="range" min="0.9" max="1.3" step="0.05" value="1"></label>
+        <label>モデルBの交差制御 <output id="crossOut">100%</output><input id="crossGain" type="range" min="0" max="2" step="0.05" value="1"></label>
+      </div><p>倍率は同じ種類の係数をまとめて変更します。人体値を同定する操作ではなく、各項の役割を比較する教育用操作です。</p></details>
+
+      <div class="stimulus-note"><b>刺激から動きまで</b><span>視覚環境の揺れ</span><i>→</i><span>脳内の傾き推定（単純な遅れ）</span><i>→</i><span>足・股関節の補正トルク</span><i>→</i><span>身体が動く</span><small>この変換は説明用の仮定で、A・Bにまったく同じ条件を使います。</small></div>
+
+      <div class="diagram-legend" aria-label="人体図の記号">
+        <span><i class="passive-icon"></i>受動トルク：組織の弾性・粘性</span>
+        <span><i class="self-icon"></i>独立制御：自分の関節を戻す</span>
+        <span><i class="inertia-icon"></i>慣性結合：M₁₂</span>
+        <span><i class="control-icon"></i>交差制御：相手の関節を見る（Bのみ）</span>
+      </div>
+
+      <div class="model-grid">
+        <article class="model-card model-a"><div class="card-head"><div><span>MODEL A</span><h3>力学的結合のみ</h3></div><p>対角制御：自分の関節だけを見る</p></div><canvas id="bodyA" aria-label="モデルAの人体アニメーション"></canvas><div class="joint-readout"><b>足 θ₁ <span id="aAnkle">0.00°</span></b><b>股 φ<sub>H</sub> <span id="aHip">0.00°</span></b></div></article>
+        <article class="model-card model-b"><div class="card-head"><div><span>MODEL B</span><h3>力学 ＋ 制御結合</h3></div><p id="bStatus">オフ対角制御：相手の関節も見る</p></div><canvas id="bodyB" aria-label="モデルBの人体アニメーション"></canvas><div class="joint-readout"><b>足 θ₁ <span id="bAnkle">0.00°</span></b><b>股 φ<sub>H</sub> <span id="bHip">0.00°</span></b></div></article>
+      </div>
+      <div class="tip" id="couplingTip">観察ポイント：慣性結合をOFFにすると、モデルAの股関節応答の大きさとタイミングが変わります。これは質量行列を通る交差応答の寄与です。</div>
+
+      <div class="equation-board">
+        <div class="equation-intro"><span>いま計算している式</span><h3>M θ̈ − Gθ = Bτ</h3><p>左辺が身体、右辺が関節トルクです。色の付いた数値だけがスイッチやスライダーで変わります。</p></div>
+        <article><span>① 身体の慣性 M</span><div id="matrixM" class="matrix-live"></div><p><mark class="mechanical">M₁₂</mark> が脚の加速を上半身へ伝えます。慣性結合OFFで0になります。</p></article>
+        <article><span>② 受動弾性 K<sub>passive</sub></span><div id="matrixKp" class="matrix-live"></div><p>筋腱・関節組織の変形で生じる復元トルク。神経フィードバックとは分けています。</p></article>
+        <article><span>③ 独立制御 K<sub>self</sub></span><div id="matrixKself" class="matrix-live"></div><p>対角成分だけ。足は足、股は股の角度を見て能動トルクを作ります。</p></article>
+        <article><span>④ 交差制御 K<sub>cross</sub>（Bのみ）</span><div id="matrixKcross" class="matrix-live"></div><p><mark class="active">オフ対角成分</mark>だけ。相手側の角度を別の関節トルクへ反映します。</p></article>
+      </div>
+    </section>
+
+    <section class="charts">
+      <div class="section-title"><span>02 / 見比べる</span><h2>動きの大きさとタイミング</h2><p>線は画面上の演出ではなく、上の2リンク運動方程式から毎回計算しています。</p></div>
+      <div class="current-response">
+        <div class="current-response-head"><div><span>選択中の周波数</span><strong id="currentFreq">0.40 Hz</strong></div><p>周波数を変えると黄色い点が曲線上を移動し、下の数値が更新されます。線形モデルなので、刺激振幅を変えても「1°あたり」のゲインは変わりません。</p></div>
+        <div class="response-model response-a"><b>MODEL A</b><dl><div><dt>足関節ゲイン</dt><dd id="gainAAnkle">—</dd></div><div><dt>股関節ゲイン</dt><dd id="gainAHip">—</dd></div><div><dt>足−股 位相差</dt><dd id="phaseADiff">—</dd></div></dl></div>
+        <div class="response-model response-b"><b>MODEL B</b><dl><div><dt>足関節ゲイン</dt><dd id="gainBAnkle">—</dd></div><div><dt>股関節ゲイン</dt><dd id="gainBHip">—</dd></div><div><dt>足−股 位相差</dt><dd id="phaseBDiff">—</dd></div></dl></div>
+      </div>
+      <article class="chart-card"><div class="chart-title"><h3>時間応答</h3><div class="legend"><i class="a"></i>A 足 <i class="a dash"></i>A 股 <i class="b"></i>B 足 <i class="b dash"></i>B 股<br><small>Aは太線、Bは細線。重なると水色の縁が残ります。</small></div></div><canvas id="timeChart"></canvas></article>
+      <div class="chart-grid">
+        <article class="chart-card"><div class="chart-title"><h3>応答ゲイン</h3><span>刺激 1° あたりの角度｜実線：足、破線：股</span></div><canvas id="gainChart"></canvas></article>
+        <article class="chart-card"><div class="chart-title"><h3>足関節−股関節の位相差</h3><span>水色：A、オレンジ：B</span></div><canvas id="phaseChart"></canvas></article>
+      </div>
+    </section>
+
+    <section class="explain">
+      <div class="section-title"><span>03 / 腑に落とす</span><h2>片方だけでは動けない</h2></div>
+      <div class="story-grid">
+        <article><b>1</b><h3>足首が脚を傾ける</h3><p>足関節のトルクで下側リンクが動きます。ここまでは直感どおりです。</p></article>
+        <article><b>2</b><h3>上半身が置いていかれる</h3><p>股関節でつながった上半身には重さと慣性があります。脚が加速すると、上半身は同じ瞬間にはついて来られません。</p></article>
+        <article><b>3</b><h3>股関節角度が生まれる</h3><p>2本のリンクの動きに差ができるため、股関節が曲がって見えます。指令がなくても起きる「交差応答」です。</p></article>
+        <article class="accent"><b>+</b><h3>制御結合は動きを組み替える</h3><p>モデルBでは、一方の傾きを他方の関節トルクにも反映します。力学で自然に生じる動きを打ち消したり、逆に強めたりでき、ゲインと位相が変わります。</p></article>
+      </div>
+    </section>
+
+    <section class="methods">
+      <div class="section-title"><span>04 / 確かめる</span><h2>仮定・式・パラメータ</h2></div>
+      <details open><summary>モデルの見取り図</summary><p>下側リンク（脚）は地面に足関節で固定され、上側リンク（頭・腕・体幹）は股関節で接続されています。角度は鉛直からの絶対角 θ₁, θ₂、表示する股関節角は θ₂−θ₁ です。膝は曲がらず、前後方向の小さな動きだけを扱います。</p></details>
+      <details><summary>運動方程式を順に読む</summary><div class="equation">φ = Cθ　／　M θ̈ − Gθ = Bτ<br>τ = τ<sub>visual</sub> − (K<sub>passive</sub> + K<sub>self</sub> + K<sub>cross</sub>)φ<br>　　− (D<sub>passive</sub> + D<sub>self</sub> + D<sub>cross</sub>)φ̇</div><p>θ = [θ₁, θ₂] は脚と上半身の絶対角、φ = [θ₁, θ₂−θ₁] は足・股関節角です。M の非対角成分 M₁₂ が慣性結合、G は直立を倒す重力です。B = [[1,−1],[0,1]] は足・股トルクを2本のリンクへ配分します。</p><p>受動項は筋腱・関節組織の力学、self項は各関節が自分自身を見る能動制御です。モデルAはこの2つまで。モデルBだけ cross 項に K<sub>AH</sub>, K<sub>HA</sub>, D<sub>AH</sub>, D<sub>HA</sub> を追加し、一方の関節状態を他方のトルクにも使います。</p></details>
+      <details><summary>「弾性・剛性」は物理ばねなのか</summary><p>ここでの受動剛性は、微小な姿勢変化の範囲で「角度変化に比例する復元トルク」として線形近似した等価係数です。人体に金属ばねが入っているという意味ではありません。筋、腱、関節周囲組織の短い範囲の応答をまとめています。実際の受動剛性は揺れの大きさや筋活動履歴で変わるため、このアプリの係数は教育用の代表値です。</p><p>立位モデルで受動粘弾性と能動制御を分ける考え方は、二重倒立振子モデルの研究でも用いられています。参考：<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5138220/" target="_blank" rel="noreferrer">Suzuki et al.</a>、筋腱の固有剛性と能動トルクを含むモデル：<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2604857/" target="_blank" rel="noreferrer">Kiemel et al.</a></p></details>
+      <details><summary>視覚刺激からトルクへの仮定</summary><div class="equation">τ<sub>visual, ankle</sub>(s) = k<sub>v</sub> / (1 + 0.18s) · v(s)</div><p>視覚環境の角度 v を「身体が傾いた」という推定へ変換し、一次遅れを通した後、足関節へ補正トルクを与えます。股関節への視覚由来の直接トルクは0として、そこに現れる運動を交差応答として観察しやすくしています。視覚刺激の回転中心を足関節とみなしたり、刺激角を関節トルクそのものとして入力したりはしていません。この写像は生理学を同定したものではなく、比較のための明示的な仮定です。</p></details>
+      <details><summary>初期パラメータ</summary><div id="params"></div></details>
+      <details><summary>限界</summary><p>小角度で線形化した説明用モデルです。前庭・体性感覚、神経遅延、筋の非線形性、個人差は含みません。周波数応答は線形モデルの複素定常解を直接計算し、時間応答は同じ状態方程式を数値積分しています。</p></details>
+    </section>
+  </main>
+  <footer>教育用シミュレーション — 数式より先に、からだの連鎖を見てみよう。</footer>
+  <script src="model.js"></script><script src="app.js"></script>
+</body>
+</html>

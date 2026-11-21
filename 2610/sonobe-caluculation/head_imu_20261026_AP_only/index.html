@@ -1,0 +1,55 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>頭部IMU AP方向解析</title><style>
+:root{--ink:#163345;--muted:#607785;--line:#dce6eb;--accent:#176b87;--bg:#f4f8fa}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Yu Gothic",Meiryo,sans-serif}
+header,main{max-width:1180px;margin:auto;padding:28px}header{padding-top:48px}h1{margin:.1em 0;font-size:clamp(1.8rem,4vw,3rem)}
+.lead{color:var(--muted);max-width:850px}.summary{background:white;border:1px solid var(--line);border-radius:16px;padding:22px;margin:24px 0}
+.summary img{display:block;width:100%;margin-top:10px}h2{margin:48px 0 16px;border-bottom:2px solid var(--accent);padding-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(430px,1fr));gap:20px}.card{background:white;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 5px 18px #1730470d}
+.card h3{margin:0 0 4px}.card img{width:100%;display:block;border-radius:9px;border:1px solid var(--line)}.metrics{margin:0 0 12px;color:var(--muted)}
+.metrics span{margin-left:18px}.links{display:flex;gap:10px;margin:14px 0 0}a{color:var(--accent)}.links a{text-decoration:none;border:1px solid var(--line);padding:5px 12px;border-radius:20px}
+.method{font-size:.94rem;color:var(--muted)}@media(max-width:560px){header,main{padding:18px}.grid{grid-template-columns:1fr}}
+</style></head><body><header><p>HEAD IMU ANALYSIS</p><h1>頭部加速度 AP（前後）方向</h1>
+<p class="lead">13記録をAP方向だけに絞り、波形・FFT・RMSを条件別に整理しました。ML（左右）方向の図表と数値は含めていません。</p></header>
+<main><section class="summary"><h2>全記録のRMS比較</h2><a href="rms_comparison_AP.svg"><img src="rms_comparison_AP.svg" alt="AP方向RMS比較"></a>
+<p><a href="rms_summary_AP.csv">AP方向 RMS一覧CSV</a></p><p class="method">主解析区間: 5 ≤ t &lt; 35 s / 100 Hz / 3000点。RMSは区間平均を除去して算出。FFTは平均除去後にHann窓を適用した片側振幅スペクトルです。</p></section>
+<section><h2>静止</h2><div class="grid"><article class="card"><h3>gridstatics / 00001</h3>
+<p class="metrics"><strong>RMS 18.564</strong> mm/s² <span>ピーク 1.83 Hz</span></p>
+<a href="261022_gridstatics_seguchi00001_AP.svg"><img loading="lazy" src="261022_gridstatics_seguchi00001_AP.svg" alt="261022_gridstatics_seguchi00001 AP解析図"></a>
+<p class="links"><a href="261022_gridstatics_seguchi00001_waveform_AP.csv">波形CSV</a><a href="261022_gridstatics_seguchi00001_fft_AP.csv">FFT CSV</a></p></article></div></section><section><h2>腰部条件</h2><div class="grid"><article class="card"><h3>gridhip02 / 00003</h3>
+<p class="metrics"><strong>RMS 15.718</strong> mm/s² <span>ピーク 1.30 Hz</span></p>
+<a href="261022_gridhip02_seguchi00003_AP.svg"><img loading="lazy" src="261022_gridhip02_seguchi00003_AP.svg" alt="261022_gridhip02_seguchi00003 AP解析図"></a>
+<p class="links"><a href="261022_gridhip02_seguchi00003_waveform_AP.csv">波形CSV</a><a href="261022_gridhip02_seguchi00003_fft_AP.csv">FFT CSV</a></p></article><article class="card"><h3>gridhip02 / 00004</h3>
+<p class="metrics"><strong>RMS 14.641</strong> mm/s² <span>ピーク 1.33 Hz</span></p>
+<a href="261022_gridhip02_seguchi00004_AP.svg"><img loading="lazy" src="261022_gridhip02_seguchi00004_AP.svg" alt="261022_gridhip02_seguchi00004 AP解析図"></a>
+<p class="links"><a href="261022_gridhip02_seguchi00004_waveform_AP.csv">波形CSV</a><a href="261022_gridhip02_seguchi00004_fft_AP.csv">FFT CSV</a></p></article><article class="card"><h3>gridhip05 / 00001</h3>
+<p class="metrics"><strong>RMS 15.616</strong> mm/s² <span>ピーク 2.67 Hz</span></p>
+<a href="261022_gridhip05_seguchi00001_AP.svg"><img loading="lazy" src="261022_gridhip05_seguchi00001_AP.svg" alt="261022_gridhip05_seguchi00001 AP解析図"></a>
+<p class="links"><a href="261022_gridhip05_seguchi00001_waveform_AP.csv">波形CSV</a><a href="261022_gridhip05_seguchi00001_fft_AP.csv">FFT CSV</a></p></article><article class="card"><h3>gridhip05 / 00002</h3>
+<p class="metrics"><strong>RMS 18.696</strong> mm/s² <span>ピーク 1.40 Hz</span></p>
+<a href="261022_gridhip05_seguchi00002_AP.svg"><img loading="lazy" src="261022_gridhip05_seguchi00002_AP.svg" alt="261022_gridhip05_seguchi00002 AP解析図"></a>
+<p class="links"><a href="261022_gridhip05_seguchi00002_waveform_AP.csv">波形CSV</a><a href="261022_gridhip05_seguchi00002_fft_AP.csv">FFT CSV</a></p></article></div></section><section><h2>下肢条件</h2><div class="grid"><article class="card"><h3>gridleg02 / 00002</h3>
+<p class="metrics"><strong>RMS 16.553</strong> mm/s² <span>ピーク 1.00 Hz</span></p>
+<a href="261022_gridleg02_seguchi00002_AP.svg"><img loading="lazy" src="261022_gridleg02_seguchi00002_AP.svg" alt="261022_gridleg02_seguchi00002 AP解析図"></a>
+<p class="links"><a href="261022_gridleg02_seguchi00002_waveform_AP.csv">波形CSV</a><a href="261022_gridleg02_seguchi00002_fft_AP.csv">FFT CSV</a></p></article><article class="card"><h3>gridleg05 / 00001</h3>
+<p class="metrics"><strong>RMS 15.966</strong> mm/s² <span>ピーク 3.43 Hz</span></p>
+<a href="261022_gridleg05_seguchi00001_AP.svg"><img loading="lazy" src="261022_gridleg05_seguchi00001_AP.svg" alt="261022_gridleg05_seguchi00001 AP解析図"></a>
+<p class="links"><a href="261022_gridleg05_seguchi00001_waveform_AP.csv">波形CSV</a><a href="261022_gridleg05_seguchi00001_fft_AP.csv">FFT CSV</a></p></article><article class="card"><h3>gridleg05 / 00002</h3>
+<p class="metrics"><strong>RMS 16.420</strong> mm/s² <span>ピーク 1.27 Hz</span></p>
+<a href="261022_gridleg05_seguchi00002_AP.svg"><img loading="lazy" src="261022_gridleg05_seguchi00002_AP.svg" alt="261022_gridleg05_seguchi00002 AP解析図"></a>
+<p class="links"><a href="261022_gridleg05_seguchi00002_waveform_AP.csv">波形CSV</a><a href="261022_gridleg05_seguchi00002_fft_AP.csv">FFT CSV</a></p></article><article class="card"><h3>gridleg / 00001</h3>
+<p class="metrics"><strong>RMS 19.190</strong> mm/s² <span>ピーク 2.47 Hz</span></p>
+<a href="261022_gridleg_seguchi00001_AP.svg"><img loading="lazy" src="261022_gridleg_seguchi00001_AP.svg" alt="261022_gridleg_seguchi00001 AP解析図"></a>
+<p class="links"><a href="261022_gridleg_seguchi00001_waveform_AP.csv">波形CSV</a><a href="261022_gridleg_seguchi00001_fft_AP.csv">FFT CSV</a></p></article></div></section><section><h2>移動条件</h2><div class="grid"><article class="card"><h3>gridtrans02 / 00001</h3>
+<p class="metrics"><strong>RMS 16.599</strong> mm/s² <span>ピーク 1.33 Hz</span></p>
+<a href="261022_gridtrans02_seguchi00001_AP.svg"><img loading="lazy" src="261022_gridtrans02_seguchi00001_AP.svg" alt="261022_gridtrans02_seguchi00001 AP解析図"></a>
+<p class="links"><a href="261022_gridtrans02_seguchi00001_waveform_AP.csv">波形CSV</a><a href="261022_gridtrans02_seguchi00001_fft_AP.csv">FFT CSV</a></p></article><article class="card"><h3>gridtrans02 / 00002</h3>
+<p class="metrics"><strong>RMS 15.889</strong> mm/s² <span>ピーク 1.47 Hz</span></p>
+<a href="261022_gridtrans02_seguchi00002_AP.svg"><img loading="lazy" src="261022_gridtrans02_seguchi00002_AP.svg" alt="261022_gridtrans02_seguchi00002 AP解析図"></a>
+<p class="links"><a href="261022_gridtrans02_seguchi00002_waveform_AP.csv">波形CSV</a><a href="261022_gridtrans02_seguchi00002_fft_AP.csv">FFT CSV</a></p></article><article class="card"><h3>gridtrans05 / 00001</h3>
+<p class="metrics"><strong>RMS 16.298</strong> mm/s² <span>ピーク 1.43 Hz</span></p>
+<a href="261022_gridtrans05_seguchi00001_AP.svg"><img loading="lazy" src="261022_gridtrans05_seguchi00001_AP.svg" alt="261022_gridtrans05_seguchi00001 AP解析図"></a>
+<p class="links"><a href="261022_gridtrans05_seguchi00001_waveform_AP.csv">波形CSV</a><a href="261022_gridtrans05_seguchi00001_fft_AP.csv">FFT CSV</a></p></article><article class="card"><h3>gridtrans05 / 00002</h3>
+<p class="metrics"><strong>RMS 16.446</strong> mm/s² <span>ピーク 1.57 Hz</span></p>
+<a href="261022_gridtrans05_seguchi00002_AP.svg"><img loading="lazy" src="261022_gridtrans05_seguchi00002_AP.svg" alt="261022_gridtrans05_seguchi00002 AP解析図"></a>
+<p class="links"><a href="261022_gridtrans05_seguchi00002_waveform_AP.csv">波形CSV</a><a href="261022_gridtrans05_seguchi00002_fft_AP.csv">FFT CSV</a></p></article></div></section></main></body></html>
