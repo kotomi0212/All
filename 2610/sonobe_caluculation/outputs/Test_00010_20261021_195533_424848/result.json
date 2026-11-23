@@ -1,0 +1,51 @@
+{
+  "source": "Test_00010.csv",
+  "reference": "https://doi.org/10.3389/fneur.2025.1500308",
+  "start_s": 5,
+  "end_s": 35,
+  "interval": "start inclusive, end exclusive",
+  "samples": 3000,
+  "sampling_hz": 100.00000000000213,
+  "input": "exported_processed_modes",
+  "percentage_definition": "100 * RMS(mode) / (RMS(ankle) + RMS(hip)); demeaned",
+  "additional_filter": false,
+  "axes": {
+    "AP": {
+      "ankle_rms": 40.86510740005881,
+      "hip_rms": 47.58684078421901,
+      "ankle_percent": 46.20034746427723,
+      "hip_percent": 53.79965253572276,
+      "rxi": 1.1644858856813018,
+      "cxi": -0.46512935450040455,
+      "head_rms": 46.10254719629611,
+      "reconstruction_rmse": 9.527836893624432e-08,
+      "reconstruction_relative_percent": 2.0666617080953614e-07,
+      "exported_summary": {
+        "ankle_rms": 40.8651074000588,
+        "hip_rms": 47.586840784219,
+        "rxi": 1.164485885681302,
+        "cxi": -0.46512935450040394
+      }
+    },
+    "ML": {
+      "ankle_rms": 56.79683059347062,
+      "hip_rms": 73.90662678845591,
+      "ankle_percent": 43.4547270065745,
+      "hip_percent": 56.545272993425506,
+      "rxi": 1.301245615577575,
+      "cxi": -0.5264012370483063,
+      "head_rms": 59.36488378637386,
+      "reconstruction_rmse": 9.480525178355819,
+      "reconstruction_relative_percent": 15.969921228973927,
+      "exported_summary": {
+        "ankle_rms": 56.7968305934706,
+        "hip_rms": 73.9066267884559,
+        "rxi": 1.3012456155775751,
+        "cxi": -0.5264012370483062
+      }
+    }
+  },
+  "warnings": [
+    "ML: モード和と頭部加速度にずれがあります (平均除去後RMSE 9.481 mm/s²)。モード割合は出力列から計算していますが、頭部加速度への寄与の解釈には機器側の計算定義確認が必要です。"
+  ]
+}
