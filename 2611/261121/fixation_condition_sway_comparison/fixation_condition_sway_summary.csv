@@ -1,0 +1,4 @@
+﻿condition,condition_label,analysis_interval_stimulus_s,samples,COM_displacement_RMS_mm,COM_displacement_0p20Hz_amplitude_mm,COM_acceleration_RMS_m_s2,COM_acceleration_0p20Hz_amplitude_m_s2,COM_displacement_RMS_mm_relative_to_no_fixation_percent,COM_displacement_0p20Hz_amplitude_mm_relative_to_no_fixation_percent,COM_acceleration_RMS_m_s2_relative_to_no_fixation_percent,COM_acceleration_0p20Hz_amplitude_m_s2_relative_to_no_fixation_percent
+none,No fixation point,3-27,2400,38.01508825890442,19.68202493581307,0.015089681112372338,0.004667804972710257,100.0,100.0,100.0,100.0
+dot,Red fixed point,3-27,2400,33.389789650439695,16.669056118038313,0.013630890079202708,0.0029987653733715026,87.83299258188275,84.6917742071731,90.3325257683972,64.24358752997206
+spinner,Rotating loading ring,3-27,2400,29.999687416708248,6.627384009142139,0.013791104371471375,0.0008153726490550144,78.91521180325368,33.672267110499725,91.39427313784495,17.46801020655296
