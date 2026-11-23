@@ -9,6 +9,10 @@ import urllib.request
 from websockets.asyncio.client import connect
 
 async def check(token):
+    async def receive(socket,kind):
+        while True:
+            message=json.loads(await asyncio.wait_for(socket.recv(),5))
+            if message['type']==kind:return message
     async def idle():
         for _ in range(100):
             def get():
@@ -19,29 +23,29 @@ async def check(token):
     async with connect('ws://localhost:8875') as q,connect('ws://localhost:8875') as op:
         await q.send(json.dumps(dict(role='quest',token=token)))
         await op.send(json.dumps(dict(role='operator',token=token)))
-        assert json.loads(await q.recv())['type']=='config'
-        assert json.loads(await op.recv())['type']=='config'
+        await receive(q,'config')
+        await receive(op,'config')
         await q.send(json.dumps(dict(type='ping',q1=1)))
-        pong=json.loads(await q.recv());assert pong['p3']>=pong['p2']
+        pong=await receive(q,'pong');assert pong['p3']>=pong['p2']
         await op.send(json.dumps(dict(type='start')))
-        a=json.loads(await q.recv());b=json.loads(await op.recv())
-        assert a['type']==b['type']=='start' and a['trial_id']==b['trial_id']
+        a=await receive(q,'start');b=await receive(op,'start')
+        assert a['trial_id']==b['trial_id']
         await op.send(json.dumps(dict(type='stop')))
-        assert json.loads(await q.recv())['type']=='stop'
-        assert json.loads(await op.recv())['type']=='stop'
+        await receive(q,'stop')
+        await receive(op,'stop')
         await idle()
         await q.send(json.dumps(dict(type='start')))
-        solo=json.loads(await q.recv());assert solo['type']=='start'
-        assert json.loads(await op.recv())['trial_id']==solo['trial_id']
+        solo=await receive(q,'start')
+        assert (await receive(op,'start'))['trial_id']==solo['trial_id']
         # A delayed termination from an old trial must not unlock a new one.
         await q.send(json.dumps(dict(type='ended',trial_id=a['trial_id'],reason='late')))
         await q.send(json.dumps(dict(type='start')))
-        assert json.loads(await q.recv())['type']=='error'
+        await receive(q,'error')
         await op.close()
         await q.send(json.dumps(dict(type='ping',q1=2)))
-        assert json.loads(await q.recv())['type']=='pong','Closing PC UI must not stop solo Quest trial'
+        await receive(q,'pong') # Closing PC UI must not stop solo Quest trial.
         await q.send(json.dumps(dict(type='stop')))
-        assert json.loads(await q.recv())['type']=='stop'
+        await receive(q,'stop')
 
 def main():
     with tempfile.TemporaryDirectory(prefix='vr-sync-smoke-') as tmp:

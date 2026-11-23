@@ -1,63 +1,125 @@
 # VR × ComBalance 計測ソフト
 
-編集できるPython・JavaScript・C#ソースを管理します。90秒マルチコサイン、30秒の注視条件3種類、目線高さの手動取得、床反力との時計対応、名前付きCSV保存を含みます。
+Meta Questの視覚刺激、ComBalanceの床反力・モーメント、外部IMUを同期記録するWindows用ソフトです。編集可能なPython・JavaScript・C#ソースをこの `main` ブランチで管理します。
 
-## 別のWindows PCに導入
+## 現状と判断
 
-居室PCでは、最初に以下で取得します。
+従来は0.05～1.50 Hzの30周波数に、各成分約0.0167 m/s²の加速度振幅を与えた90秒マルチコサイン刺激を使用していました。しかしCOM変位が小さく、床反力・モーメントからの推定値がノイズに埋もれた可能性があります。
+
+出力を直接計測COM加速度 `F_y / M` とし、次の一次遅れモデルを仮定しました。
+
+$$
+T_v\dot a_{COM}+a_{COM}=-\gamma_v a_{\mathrm{visual}}
+$$
+
+現在の計測では、周波数ごとの実測ゲインと位相のばらつきが大きく、位相を含めた同定はモデルと一致しませんでした。ゲインだけで同定しても適合度は最大約9%で、同一被験者の試行間でも $T_v$ が再現しませんでした。現段階ではパラメータ同定より先に、各入力周波数に対する身体応答のS/N比を確保する必要があります。
+
+## 新しい予備試験刺激
+
+推奨順序は次のとおりです。
+
+$$
+\text{単一周波数}
+\rightarrow
+\text{5周波数}
+\rightarrow
+\text{振幅調整}
+\rightarrow
+\text{再現性確認}
+\rightarrow
+\text{モデル同定}
+$$
+
+| 条件 | 時間 | 定常解析区間 | 各成分の加速度振幅 | 使用可否 |
+| --- | ---: | ---: | ---: | --- |
+| 静止格子 | 60秒 | 0～60秒 | 0 | 可 |
+| 0.20 Hz単一 | 40秒 | 5～35秒 | 0.0167 / 0.0333 / 0.0500 m/s²（1/2/3倍） | 可 |
+| 5周波数 | 100秒 | 10～90秒 | 0.0167 / 0.0233 m/s²（1/1.4倍） | 可 |
+| 5周波数 | 100秒 | 10～90秒 | 0.0333 / 0.0500 m/s²（2/3倍） | 開始不可 |
+
+5周波数は、園部・三浦2025の低周波帯を参考に次の0.70 Hz以下に限定しています。
+
+$$
+0.05,\ 0.10,\ 0.20,\ 0.40,\ 0.70\ \mathrm{Hz}
+$$
+
+ただし、同論文の対象は支持面の機械的並進であり、本ソフトの視覚入力モデルを検証したものではありません。
+
+低周波の加速度振幅をそのまま増やすと変位と速度が大きくなります。特に5周波数の2倍・3倍は、暫定工学上限（変位0.30 m、速度0.10 m/s、加速度0.20 m/s²）のうち変位と速度を超えるため、UIとサーバーの両方で開始を拒否します。この上限は人体の安全性を実証した値ではありません。設計根拠と最大値の詳細は [PILOT_DESIGN.md](PILOT_DESIGN.md) を参照してください。
+
+## 実機での検証手順
+
+1. メーカーソフトで外部IMUを手で動かし、信号が変化することを確認する。自作ソフトの起動前にメーカーソフトを終了する。
+2. 自作ソフトの静止60秒条件でIMUを数秒動かし、CSVの外部7chに変化があることを確認する。
+3. IMUを動かさない静止60秒を別に記録し、ノイズ基準、身体AP軸、センサー軸、力の符号を確認する。
+4. 0.20 Hz単一1倍を計測し、VR入力、床反力、頭部IMUに0.20 Hzピークが現れるか確認する。
+5. 体調・不快感と最大変位・速度・加速度を確認しながら、単一2倍、3倍へ段階的に進む。
+6. 計測系が確認できた後に5周波数1倍、必要な場合のみ1.4倍を行う。
+7. 採用条件を最低3回、可能なら5回計測し、条件順をランダム化する。
+
+応答が見えない場合は振幅を上げ続けず、入力ログ、床反力軸、同期、IMUの取得と重力成分除去を先に点検します。
+
+## 保存する信号
+
+- ComBalanceの床反力6軸、元ADC、受信時刻
+- 外部IMUの生7chとPC基準の受信時刻
+- VRで実際に適用した格子部屋の位置、速度、加速度
+- Questのフレーム処理時刻とPC時刻との対応
+- 刺激周波数、位相、成分振幅、解析区間、最大値、上限値
+
+Questのログは描画命令であり、実際のディスプレイ発光時刻を測定したものではありません。センサー取得遅延と表示遅延も未校正です。外部IMUの7chが3軸加速度、3軸角速度、姿勢のどの成分に対応するかは、実機とメーカー仕様で確定する必要があります。
+
+## 同定前の品質判定
+
+各周波数について次を確認し、応答が十分に検出できる周波数だけをモデル同定に使います。
+
+- VR入力のFFTピーク
+- 頭部・COM加速度のFFTピーク
+- 静止試行を基準にしたS/N比
+- 適切な区間平均または反復試行から推定したコヒーレンス
+- 同一条件の試行間における複素応答の再現性
+
+単一は5～35秒、5周波数は10～90秒を解析し、開始・終了ランプを混ぜません。未平均のDFT一本から求めたコヒーレンスは品質判定に使いません。
+
+## 導入と起動
 
 ```powershell
-git clone --branch feature/quest-combalance-software https://github.com/kotomi0212/All.git
+git clone --branch main https://github.com/kotomi0212/All.git
 cd All
-```
-
-GitとPython（現在の検証環境は64 bit Python 3.13）、必要に応じてNode.jsをインストールします。このブランチをcloneした後、リポジトリのルートで次を実行してください。
-
-```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r research_sync/requirements.txt
 ```
 
-`research_sync/計測ソフトを起動.cmd` で起動します。居室PCに機器がなくてもコードの編集と映像プレビューができます。
+`research_sync/計測ソフトを起動.cmd` で起動します。実計測にはMeta Quest Developer Hub、USBデバッグ許可、ComBalanceメーカーソフト・ドライバー、機器のUSB接続が必要です。メーカーDLLとドライバーはGitに含まれません。ADBとメーカーソフトの場所が既定値と異なる場合は `control_app.py` 冒頭の `ADB` と `VENDOR` を変更します。
+
+機器を接続しなくても刺激の再生・プレビューはできます。
 
 ```powershell
-.\.venv\Scripts\python.exe -m research_sync.visual_preview_server
-# PCで http://localhost:8870/visual-preview.html
-.\.venv\Scripts\python.exe -m research_sync.fixation_server
-# PCで http://localhost:8872
+.\.venv\Scripts\python.exe -m research_sync.visual_preview_server --port 8873
+# http://localhost:8873/pilot-preview.html
 ```
 
-実計測にはMeta Quest Developer Hub、USBデバッグ許可、ComBalanceメーカーソフト・ドライバー、機器のUSB接続が必要です。メーカーDLL・ドライバー・論文PDFはGitに含めていません。メーカーソフトの利用権限を持つPCで別途導入してください。メーカー取得用C#ヘルパーは初回準備でコンパイルします。ADBとメーカーソフトの既定パスが異なる場合は `control_app.py` 冒頭の `ADB` と `VENDOR` を変更します。
-
-## 編集する場所
+## 主な編集箇所
 
 | 内容 | 主なファイル |
 | --- | --- |
 | PC画面・操作・保存確認 | `control_app.py` |
-| 計測とQuestの通信・開始予約 | `server.py`、`quest.js` |
-| 90秒波形の設定・生成 | `visual_stimulus_settings.json`、`visual_stimulus.py` |
-| 30秒の単一周波数波形 | `fixation.js`、`trial_stimuli.py` |
-| 赤点・回転表示と高さ取得 | `fixation_target.js` |
-| CSVと名前・体重推定 | `recording.py`、`named_recording.py` |
+| 計測とQuest通信・開始予約 | `server.py`、`quest.js` |
+| 予備試験刺激の生成・上限 | `low_band.py` |
+| 予備試験刺激プロファイル | `pilot_profiles/` |
+| 従来90秒30周波数刺激 | `visual_stimulus_settings.json`、`visual_stimulus.py` |
+| 30秒注視条件 | `fixation.js`、`trial_stimuli.py`、`fixation_target.js` |
+| ComBalanceメーカーAPI取得 | `ManufacturerCapture.cs`、`acquisition.py` |
+| CSVと被験者情報 | `recording.py`、`named_recording.py` |
 
-30秒の波形条件を変更するときは、プレビュー側 `fixation.js` と計測メタデータ側 `trial_stimuli.py` の設定を合わせてください。
-
-## 2台のPCで更新を共有
-
-同じブランチを使います。作業前に `git pull --ff-only`、編集後に変更したソースだけを `git add` し、`git commit` と `git push` を行ってください。他方のPCで `git pull --ff-only` すると更新を取得できます。両PCで同時に同じファイルを変更した場合は競合解消が必要です。ソフトを再起動し、Questのページも再読み込みして変更を反映します。
-
-`recordings/`、`sessions/`、実測を含む `results/`、ローカル調査資料、トークン、証明書、メーカー配布物は除外しています。例外として管理する `results/stimulus/` と `results/visual-stimulus-20261121/` は数学的に生成した刺激だけです。**Gitは計測データのバックアップにはなりません。**
-
-## ソフトウェア試験
+## テスト
 
 ```powershell
-.\.venv\Scripts\python.exe -m unittest research_sync.test_visual_stimulus research_sync.test_control research_sync.test_fixation_sync research_sync.test_named_recording
+.\.venv\Scripts\python.exe -m unittest research_sync.test_low_band research_sync.test_visual_stimulus research_sync.test_control research_sync.test_fixation_sync research_sync.test_named_recording
 node research_sync/test_quest.js
 node research_sync/test_fixation_target.js
 ```
 
-テストの被験者情報と床反力は合成データです。実機の取得遅延と光学的表示遅延は未校正です。
+詳細資料: [予備試験刺激](PILOT_DESIGN.md)、[PC計測ソフトの使い方](PC計測ソフトの使い方.md)、[CSV保存](CSV保存の使い方.md)、[90秒刺激](VISUAL_STIMULUS.md)
 
-操作の詳細: [注視条件と同期](FIXATION_README.md)、[CSV保存](CSV保存の使い方.md)、[90秒刺激](VISUAL_STIMULUS.md)。
-
-新規予備試験: [低周波・少数成分の刺激設計](PILOT_DESIGN.md)。0.20 Hz単一40秒、5周波数100秒、静止60秒と外部IMUのゼロ検出を追加。
+実測データ、被験者情報、メーカー配布物はGitに追加しません。Gitは計測データのバックアップではありません。
