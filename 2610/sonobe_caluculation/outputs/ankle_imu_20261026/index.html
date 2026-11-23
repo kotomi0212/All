@@ -1,0 +1,28 @@
+<!doctype html><meta charset="utf-8"><title>足関節モード加速度解析</title><style>body{font:16px sans-serif;max-width:1200px;margin:32px auto;padding:16px;color:#173047}img{width:100%}pre{white-space:pre-wrap;background:#f2f5f8;padding:20px}h2{margin-top:48px}</style><h1>足関節モード加速度：時刻波形・FFT・RMS</h1><p><a href="rms_summary.csv">RMS一覧CSV</a></p><pre>足関節モード加速度解析（13記録）
+使用列: xix1=前後(AP)、xiy1=左右(ML)、単位 mm/s²。装置処理済みの加速度。足関節・股関節モードは装置の推定値であり、関節角度や関節そのものの実測加速度ではありません。
+全記録100 Hz、6000点、0–59.99秒。主解析は既存プロジェクトに合わせ5 ≤ t &lt; 35秒（3000点）。
+時刻波形は全区間の装置出力値、色付き背景は主解析区間。波形CSVも装置出力値。
+主RMS=sqrt(mean((x-mean(x))²))。平均除去なしRMS、区間平均、全区間の平均除去RMS、装置内RMSもCSVに併記。
+FFT: 区間平均除去→対称Hann窓→rFFT。片側振幅=abs(rFFT)/sum(window)、DC/Nyquist以外2倍。単位mm/s²。
+周波数分解能1/30≈0.03333 Hz、Nyquist=50 Hz。図は0–5 Hz、FFT CSVは0–50 Hz。
+RMSは窓掛け前の信号で算出。追加フィルタ、補間、再サンプリングなし。機器メタデータのフィルタ設定はHP=0.1 Hz、LP=4 Hz。
+機器内の姿勢・重力補正は再実装していません。rawAx1/2等からのセンサー同定は行っていません。
+ファイル名から推測した条件を内部名に上書きしません。元CSVは変更していません。
+検証: 有限値・時刻連続性・サンプリング・単位確認、既知正弦波のFFT振幅確認、窓なしFFTのParseval等式によるRMS検証。
+
+確認事項:
+261022_gridhip02_seguchi00003.csv: 装置内RMSXI1と5–35秒の平均除去RMSは一致しません。装置内指標を置換せず併記。
+261022_gridhip02_seguchi00004.csv: 装置内RMSXI1と5–35秒の平均除去RMSは一致しません。装置内指標を置換せず併記。
+261022_gridhip05_seguchi00001.csv: 装置内RMSXI1と5–35秒の平均除去RMSは一致しません。装置内指標を置換せず併記。
+261022_gridhip05_seguchi00002.csv: 装置内RMSXI1と5–35秒の平均除去RMSは一致しません。装置内指標を置換せず併記。
+261022_gridleg02_seguchi00002.csv: 装置内RMSXI1と5–35秒の平均除去RMSは一致しません。装置内指標を置換せず併記。
+261022_gridleg05_seguchi00001.csv: 装置内RMSXI1と5–35秒の平均除去RMSは一致しません。装置内指標を置換せず併記。
+261022_gridleg05_seguchi00002.csv: 装置内RMSXI1と5–35秒の平均除去RMSは一致しません。装置内指標を置換せず併記。
+261022_gridleg_seguchi00001.csv: 装置内RMSXI1と5–35秒の平均除去RMSは一致しません。装置内指標を置換せず併記。
+261022_gridstatics_seguchi00001.csv: 装置内RMSXI1と5–35秒の平均除去RMSは一致しません。装置内指標を置換せず併記。
+261022_gridtrans02_seguchi00001.csv: 装置内RMSXI1と5–35秒の平均除去RMSは一致しません。装置内指標を置換せず併記。
+261022_gridtrans02_seguchi00002.csv: 装置内RMSXI1と5–35秒の平均除去RMSは一致しません。装置内指標を置換せず併記。
+261022_gridtrans05_seguchi00001.csv: 装置内RMSXI1と5–35秒の平均除去RMSは一致しません。装置内指標を置換せず併記。
+261022_gridtrans05_seguchi00001.csv: 内部測定名=261022_gridtrans02_seguchi。条件名はファイル名で表示。
+261022_gridtrans05_seguchi00002.csv: 装置内RMSXI1と5–35秒の平均除去RMSは一致しません。装置内指標を置換せず併記。
+261022_gridtrans05_seguchi00002.csv: 内部測定名=261022_gridtrans02_seguchi。条件名はファイル名で表示。</pre><h2>261022_gridhip02_seguchi00003</h2><img src="261022_gridhip02_seguchi00003.png"><p><a href="261022_gridhip02_seguchi00003_waveform.csv">時刻波形CSV</a> · <a href="261022_gridhip02_seguchi00003_fft.csv">FFT CSV（0–50 Hz）</a></p><h2>261022_gridhip02_seguchi00004</h2><img src="261022_gridhip02_seguchi00004.png"><p><a href="261022_gridhip02_seguchi00004_waveform.csv">時刻波形CSV</a> · <a href="261022_gridhip02_seguchi00004_fft.csv">FFT CSV（0–50 Hz）</a></p><h2>261022_gridhip05_seguchi00001</h2><img src="261022_gridhip05_seguchi00001.png"><p><a href="261022_gridhip05_seguchi00001_waveform.csv">時刻波形CSV</a> · <a href="261022_gridhip05_seguchi00001_fft.csv">FFT CSV（0–50 Hz）</a></p><h2>261022_gridhip05_seguchi00002</h2><img src="261022_gridhip05_seguchi00002.png"><p><a href="261022_gridhip05_seguchi00002_waveform.csv">時刻波形CSV</a> · <a href="261022_gridhip05_seguchi00002_fft.csv">FFT CSV（0–50 Hz）</a></p><h2>261022_gridleg02_seguchi00002</h2><img src="261022_gridleg02_seguchi00002.png"><p><a href="261022_gridleg02_seguchi00002_waveform.csv">時刻波形CSV</a> · <a href="261022_gridleg02_seguchi00002_fft.csv">FFT CSV（0–50 Hz）</a></p><h2>261022_gridleg05_seguchi00001</h2><img src="261022_gridleg05_seguchi00001.png"><p><a href="261022_gridleg05_seguchi00001_waveform.csv">時刻波形CSV</a> · <a href="261022_gridleg05_seguchi00001_fft.csv">FFT CSV（0–50 Hz）</a></p><h2>261022_gridleg05_seguchi00002</h2><img src="261022_gridleg05_seguchi00002.png"><p><a href="261022_gridleg05_seguchi00002_waveform.csv">時刻波形CSV</a> · <a href="261022_gridleg05_seguchi00002_fft.csv">FFT CSV（0–50 Hz）</a></p><h2>261022_gridleg_seguchi00001</h2><img src="261022_gridleg_seguchi00001.png"><p><a href="261022_gridleg_seguchi00001_waveform.csv">時刻波形CSV</a> · <a href="261022_gridleg_seguchi00001_fft.csv">FFT CSV（0–50 Hz）</a></p><h2>261022_gridstatics_seguchi00001</h2><img src="261022_gridstatics_seguchi00001.png"><p><a href="261022_gridstatics_seguchi00001_waveform.csv">時刻波形CSV</a> · <a href="261022_gridstatics_seguchi00001_fft.csv">FFT CSV（0–50 Hz）</a></p><h2>261022_gridtrans02_seguchi00001</h2><img src="261022_gridtrans02_seguchi00001.png"><p><a href="261022_gridtrans02_seguchi00001_waveform.csv">時刻波形CSV</a> · <a href="261022_gridtrans02_seguchi00001_fft.csv">FFT CSV（0–50 Hz）</a></p><h2>261022_gridtrans02_seguchi00002</h2><img src="261022_gridtrans02_seguchi00002.png"><p><a href="261022_gridtrans02_seguchi00002_waveform.csv">時刻波形CSV</a> · <a href="261022_gridtrans02_seguchi00002_fft.csv">FFT CSV（0–50 Hz）</a></p><h2>261022_gridtrans05_seguchi00001</h2><img src="261022_gridtrans05_seguchi00001.png"><p><a href="261022_gridtrans05_seguchi00001_waveform.csv">時刻波形CSV</a> · <a href="261022_gridtrans05_seguchi00001_fft.csv">FFT CSV（0–50 Hz）</a></p><h2>261022_gridtrans05_seguchi00002</h2><img src="261022_gridtrans05_seguchi00002.png"><p><a href="261022_gridtrans05_seguchi00002_waveform.csv">時刻波形CSV</a> · <a href="261022_gridtrans05_seguchi00002_fft.csv">FFT CSV（0–50 Hz）</a></p>
