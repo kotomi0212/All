@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="床反力計・頭部IMUの処理済みCSVから、足関節・股関節モードを解析。ファイルはブラウザー内で処理します。">
+  <meta name="referrer" content="no-referrer">
+  <title>立位バランス解析 | Balance Lab</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%2328383b'/%3E%3Cpath d='M7 24h7l4-12 6 18 3-6h6' stroke='%23b7d8ba' fill='none' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.mjs"></script>
+</head>
+<body>
+<header class="topbar"><a href="/" class="brand" aria-label="Balance Lab ホーム"><span class="mark" aria-hidden="true">⌁</span> BALANCE LAB<span class="brand-divider"></span><span class="brand-ja">立位バランス解析</span></a><span class="privacy"><span class="dot"></span> ブラウザー内で解析</span></header>
+<main>
+  <section class="hero"><div><p class="eyebrow">POSTURAL STRATEGY ANALYSIS</p><h1>立位のバランスを、<br>ふたつのモードから。</h1><p class="lead">床反力計と頭部IMUのCSVから、<br class="mobile-break">足関節・股関節モードの大きさと関係を読み解きます。</p></div><div class="hero-art" aria-hidden="true"><div class="orbit o1"></div><div class="orbit o2"></div><div class="body-line"></div><span class="joint head"></span><span class="joint hip"></span><span class="joint ankle"></span><span class="art-label al1">HIP MODE</span><span class="art-label al2">ANKLE MODE</span><span class="ground"></span></div></section>
+  <div class="workspace">
+  <aside class="input-panel">
+    <div class="section-heading"><span class="step">01</span><h2>測定データ</h2></div>
+    <label class="dropzone" id="dropzone" for="file"><input id="file" type="file" accept=".csv,text/csv"><span class="upload-icon" aria-hidden="true">↥</span><strong>CSVをここにドロップ</strong><span>またはクリックして選択</span><small>MedicalForcePlate · UTF-8 / Shift-JIS<br>処理済みモード列付き · 最大50 MB</small></label>
+    <p class="file-name" id="filename">ファイル未選択</p>
+    <p class="file-meta" id="filemeta">選択すると自動で解析します。</p>
+    <hr>
+    <div class="section-heading"><span class="step">02</span><h2>解析区間</h2></div>
+    <form id="rangeform"><div class="range-inputs"><label>開始 <span>s</span><input id="start" type="number" value="5" step="any" required disabled></label><span class="range-dash">—</span><label>終了 <span>s</span><input id="end" type="number" value="35" step="any" required disabled></label></div><p class="hint">開始時刻を含み、終了時刻は含みません。</p><div class="range-buttons"><button type="submit" id="recalc" class="button primary" disabled>この区間で解析 <span>→</span></button><button type="button" id="full" class="button secondary" disabled>全区間</button></div></form>
+    <p class="interval-note" id="intervalnote">初期設定：5〜35秒（論文の解析区間）</p>
+    <div class="local-note"><span aria-hidden="true">◇</span><div><strong>測定ファイルは手元に。</strong><p>CSVはブラウザーのメモリー内で処理します。サーバーへの送信・自動保存は行いません。</p></div></div>
+  </aside>
+  <section class="result-panel" aria-label="解析結果">
+    <div class="results-top"><div><p class="eyebrow">ANALYSIS RESULTS</p><h2>モードの割合</h2></div><span id="analysisstatus" class="status">データ待ち</span></div>
+    <div id="message" class="message" role="alert" hidden></div>
+    <div id="empty" class="empty"><span class="empty-symbol" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><h3>CSVを選んで、解析をはじめましょう</h3><p>前後・左右それぞれのモード割合と、<br>論文指標 RXI・CXI を確認できます。</p><div class="legend"><span class="ankle-key">足関節モード</span><span class="hip-key">股関節モード</span></div></div>
+    <div id="results" hidden>
+      <div class="cards" id="cards"></div>
+      <p class="share-note">表示割合 = 各モードRMS ÷ 両モードRMS合計 × 100。百分率は見やすさのための正規化表示です。</p>
+      <div id="warnings" class="warnings" hidden></div>
+      <section class="chart-section"><div class="chart-top"><div><h3>モードの時間変化</h3><p>区間平均を除去した加速度</p></div><div class="segmented" role="group" aria-label="波形の方向"><button id="ap" type="button" aria-pressed="true">前後 AP</button><button id="ml" type="button" aria-pressed="false">左右 ML</button></div></div><div class="legend trace-legend"><span class="ankle-key">足関節</span><span class="hip-key">股関節</span><span class="head-key">頭部</span></div><div id="chart"></div><p class="chart-caption" id="chartcaption"></p></section>
+      <details class="indices" open><summary>論文指標・整合性を確認</summary><div class="table-scroll"><table><thead><tr><th>指標</th><th>前後 AP</th><th>左右 ML</th></tr></thead><tbody id="metrics"></tbody></table></div><p class="hint">RXI：股関節RMS / 足関節RMS。CXI：両モードの相関係数。負の相関は逆位相の関係を示します。</p></details>
+      <div class="export-row"><div><strong>解析結果を手元に保存</strong><p>表示中の区間・注意事項と一緒に書き出します。</p></div><div class="export-buttons"><button id="csvexport" class="button secondary">CSV ↓</button><button id="jsonexport" class="button secondary">JSON ↓</button><button id="svgexport" class="button secondary">波形 SVG ↓</button></div></div>
+    </div>
+  </section>
+  </div>
+  <section class="method"><div><p class="eyebrow">ABOUT THE METHOD</p><h2>解析の読み方</h2></div><div class="method-content"><p>園部元康・光武翼（2025）のモード解析を参考に、装置で推定済みの波形（xix1・xix2・xiy1・xiy2）からRMS、RXI、CXIを計算します。選択区間の平均を除去し、追加のフィルタは適用しません。</p><details><summary>対応データと割合の意味</summary><p>この版はMedicalForcePlateの処理済みモード列を使用します。生の床反力・IMUのみからの姿勢推定やモード再推定には対応していません。加速度の単位はmm/s²です。</p><p>百分率は動作時間・関節トルク・分散の寄与率ではありません。モード間の相殺を含むため、RMS合計は頭部加速度RMSと一致する必要はありません。MLの股関節モードは、論文では腰部付近の関節モデルに対応します。</p><p>モード波形の和と頭部加速度の整合性を確認し、ずれが頭部RMSの1%（絶対下限0.00001 mm/s²）を超えると注意を表示します。この閾値は実装上の確認用で、臨床基準ではありません。</p></details><a class="paper-link" href="https://doi.org/10.3389/fneur.2025.1500308" target="_blank" rel="noopener noreferrer">Sonobe & Mitsutake, Frontiers in Neurology (2025) ↗</a></div></section>
+</main>
+<footer><span>BALANCE LAB</span><p>測定データを保存する場合は、解析結果のダウンロードをご利用ください。</p><button id="clear" type="button">読み込んだデータを消去</button></footer>
+</body></html>
