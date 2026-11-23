@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>床を動かす・2リンク姿勢ラボ</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,'Yu Gothic',sans-serif;color:#e6ecf4;background:#101720}*{box-sizing:border-box}body{margin:0}main{max-width:1220px;margin:auto;padding:28px}h1{font-size:30px;margin:8px 0}h2{font-size:19px}p{color:#aebdce;line-height:1.8}small,.eyebrow{color:#9baec3}.eyebrow{letter-spacing:.15em;font-size:12px}.layout{display:grid;grid-template-columns:1fr 300px;gap:20px}.card{background:#182330;border:1px solid #2b3b4c;border-radius:16px;padding:20px}.stage{padding:0;overflow:hidden;position:sticky;top:16px;align-self:start}#world,#world-reference{width:100%;height:470px;display:block;touch-action:none;cursor:ew-resize}.stage-hint{position:absolute;top:16px;left:20px;font-size:13px;color:#aebdce;pointer-events:none}button,select{font:inherit;padding:9px 12px;background:#26394c;border:1px solid #43586d;color:#e6ecf4;border-radius:8px}button{cursor:pointer}button:hover{background:#38516a}button.active{background:#285e62;border-color:#57d6c7}select{width:100%}label{display:block;font-size:13px;margin:18px 0 9px}input[type=range]{width:100%;accent-color:#5cddca}.row{display:flex;gap:8px;flex-wrap:wrap}.readouts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}.readouts div{background:#182330;padding:14px;border-radius:10px}.readouts span{display:block;color:#aebdce;font-size:12px}.readouts b{display:block;margin-top:8px;font-size:21px;font-variant-numeric:tabular-nums}#trace{width:100%;height:180px;display:block}.legend{font-size:13px;display:flex;gap:20px}.leg{color:#59ddc8}.hat{color:#ffab79}.hip{color:#c6b5ff}#status{min-height:40px;color:#f5d79a;font-size:13px}details{margin-top:18px}summary{cursor:pointer}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:9px;border-bottom:1px solid #354658;text-align:left}code{color:#b9dacd}a{color:#7bdacf}.note{font-size:13px}output{float:right;color:#59ddc8}@media(max-width:850px){main{padding:16px}.layout{grid-template-columns:1fr}.stage{position:relative;top:0}.readouts{grid-template-columns:repeat(2,1fr)}#world,#world-reference{height:360px}h1{font-size:25px}}
+.bodies{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.body-panel{min-width:0}.body-panel+ .body-panel{border-left:1px solid #354658}.body-panel h3{font-size:15px;margin:18px 12px 0;min-height:44px}.body-panel .readouts{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:6px}.body-panel .readouts div{padding:8px}.body-panel .readouts b{font-size:16px}.stage-hint{position:static;padding:14px 12px 0}.body-panel canvas{margin-top:0}@media(max-width:480px){.body-panel h3{font-size:13px}.body-panel .readouts{grid-template-columns:1fr}.body-panel .readouts b{font-size:15px}} </style></head><body><main>
+<div class="eyebrow">TWO-LINK BALANCE · INTERACTIVE PHYSICS</div><h1>床を動かす。身体の応答を見る。</h1><p>足関節と股関節をもつ、ヒト寸法の2リンク倒立振子。画面を左右にドラッグすると、床が滑らかに追従します。</p>
+<p id="startup-status" role="status">読み込み中です。この表示が続く場合は、HTMLを保存してEdge・Chromeなどのブラウザで直接開いてください。</p><noscript><p>JavaScriptが無効のため、シミュレーションを実行できません。</p></noscript>
+<div class="layout"><section class="card stage"><div class="stage-hint" id="hint">画面を左右にドラッグ → 床を移動（±8 cm）</div><div class="bodies">
+<div class="body-panel"><h3>左：基準モデル（成人参考）</h3><canvas id="world-reference" aria-label="左：基準モデル。ドラッグで両モデル共通の床入力を操作"></canvas><div class="readouts"><div><span>脚 θ₁</span><b id="leg-reference">0.00°</b></div><div><span>体幹 θ₂</span><b id="hat-reference">0.00°</b></div><div><span>股関節角</span><b id="hip-reference">0.00°</b></div><div><span>床変位</span><b id="floor-reference">0.0 cm</b></div></div></div>
+<div class="body-panel"><h3>右：<span id="selected-title">高齢者参考：P比＋遅延差</span></h3><canvas id="world" aria-label="右：高齢者参考または選択条件。ドラッグで両モデル共通の床入力を操作"></canvas><div class="readouts"><div><span>脚 θ₁</span><b id="leg">0.00°</b></div><div><span>体幹 θ₂</span><b id="hat">0.00°</b></div><div><span>股関節角</span><b id="hip">0.00°</b></div><div><span>床変位</span><b id="floor">0.0 cm</b></div></div></div>
+</div></section>
+<aside class="card"><h2>比較条件を選ぶ</h2><label for="profile">文献に基づく感度分析</label><select id="profile"><option value="older">高齢者参考：P比＋遅延差</option><option value="reference">基準（従来の教育モデル）</option><option value="gainOnly">要因分離：P比のみ</option><option value="delayOnly">要因分離：遅延差のみ</option></select><p class="note" id="profile-note"></p><label><input id="overlay" type="checkbox" checked> グラフに基準の股関節角を破線で表示</label>
+<h2>入力を選ぶ</h2><select id="mode" aria-label="入力対象"><option value="floor">床の水平移動</option><option value="visual">視覚背景の回転（床は固定）</option></select>
+<label>操作方法</label><div class="row"><button id="manual" class="active">手で動かす</button><button id="auto">正弦波</button></div>
+<label for="position">手動入力 <output id="position-value">0.0 cm</output></label><input id="position" type="range" min="-100" max="100" step=".1" value="0" aria-label="手動入力。矢印キーでも操作可能">
+<label for="frequency">正弦波の周波数 <output id="frequency-value">0.20 Hz</output></label><input id="frequency" type="range" min=".05" max="2" step=".01" value=".2"><div class="row"><button data-f=".2">ゆっくり 0.2</button><button data-f="1.2">速く 1.2</button></div>
+<label for="amplitude">正弦波の振幅 <output id="amplitude-value">2.0 cm</output></label><input id="amplitude" type="range" min=".1" max="4" step=".1" value="2">
+<label for="weight">視覚への重み <output id="weight-value">0.50</output></label><input id="weight" type="range" min="0" max="1" step=".05" value=".5">
+<label><input id="control" type="checkbox" checked> 姿勢を保つ制御を入れる</label><div class="row"><button id="pause">一時停止</button><button id="reset">リセット</button></div><p id="status" role="status">実時間・実寸表示 / 制御則は固定</p></aside></div>
+<p class="note">左右は同一縮尺・同一時刻・同一入力です。左は従来の教育用基準モデル、右は高齢者参考条件です。両者の実測挙動を再現した年齢別モデルではありません。</p>
+<section class="card"><div class="legend" style="flex-wrap:wrap"><span class="leg">━ 脚</span><span class="hat">━ 体幹</span><span class="hip">━ 股関節角</span><span>白破線：基準の股関節角</span><span>直近12秒 / 角度 °</span></div><canvas id="trace" aria-label="脚・体幹・股関節の角度履歴"></canvas><p class="note" id="comparison" aria-live="off"></p></section>
+<section class="card" style="margin-top:20px"><h2>高齢者参考条件の読み方</h2><p>この条件は<strong>健康な高齢者群で報告された一部の群間差を、今の2リンクへ移した感度分析</strong>です。若年者・高齢者の実測挙動を再現したモデルではありません。左右の身体には同じ床・背景入力が入ります。条件を変えると状態と入力位相をリセットするため、正弦波なら同じ開始条件で比較できます。</p>
+<table><thead><tr><th>参照した値</th><th>若年群</th><th>高齢群</th><th>このデモへの反映</th></tr></thead><tbody><tr><td>比例ゲイン P/mgh（rad⁻¹）</td><td>1.43</td><td>1.29</td><td>既存Kの両成分を1.29/1.43 ≈ 0.902倍</td></tr><tr><td>総合的な反応遅延 Td（ms）</td><td>153</td><td>177</td><td>差分24 msのみを追加</td></tr></tbody></table>
+<p class="note">出典：<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4477145/" target="_blank" rel="noreferrer">Wiesmeier, Dalin &amp; Maurer (2015), Model parameters / Figure 8</a>。前後方向の床傾斜実験を1リンクのフィードバックモデルで解析した研究です。このデモは床の水平移動または背景回転なので、刺激条件も異なります。P比を2リンクへ一律適用すること、元モデルの0 msへ遅延差のみを加えることは本デモ独自の仮定です。153/177 msという絶対遅延は実装していません。人工的な瞬時の重力補償は維持し、残りのPD・視覚入力経路だけを遅延させます。減衰D・体格・視覚の重みは基準と同じです。同研究でDの有意な年齢差がなかったため、Dを自動的には変更しません。固有感覚の重みWpは視覚単独の重みではないため、視覚スライダーへ転用していません。</p>
+<p class="note">関連する2リンク研究：<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4808116/" target="_blank" rel="noreferrer">Engelhartら (2016)</a>。腰・肩への力外乱では、高齢群の足関節剛性増加、股関節経路の遅延増加などを報告しています。「高齢者ならすべての関節が同じように弱く／硬くなる」とは扱えません。この研究のパラメータは本デモへ混在させていません。</p>
+<p class="note">考察で使う表現例：「文献で報告された比例ゲイン比と追加遅延を与え、同一体格・同一入力における2リンク応答の感度を調べた」。この結果だけから高齢者の戦略切り替え周波数、転倒リスク、視覚依存性を推定することはできません。<a href="age_model_notes.md">出典・実装対応メモ</a></p></section>
+<section class="card" style="margin-top:20px"><h2>観察の順番</h2><p>① 床をゆっくり往復 → 急に切り返す。床の「位置」だけでなく、加速度が身体を揺らします。<br>②「正弦波」で0.2 Hzと1.2 Hzを比較。脚と体幹のタイミング、股関節の曲がり方を見ます。<br>③「視覚背景の回転」へ切り替える。床は固定され、背景の傾きが姿勢制御にだけ入ります。視覚への重みを0にすると、背景による身体応答は消えます。<br>④ 制御を外して床を動かす。倒立振子は自力では立ち続けられません。</p>
+<p class="note"><strong>ここで見えるのは運動パターンです。</strong>逆向きの動きや股関節角の増大は、神経が「股関節戦略へ切り替えた」ことの証明ではありません。このデモには周波数による制御切り替えを入れていません。視覚刺激の「高周波」は背景が往復する周波数のことで、画面の更新頻度ではありません。</p>
+<details><summary>モデル・人体パラメータ・限界</summary><p>前後方向を横から見る、小角度線形2リンクモデルです。膝は固定、足は床に固定。θ₁・θ₂は鉛直からの絶対角です。床は水平並進のみで、回転しません。±20°で小角度モデルの適用外として停止します。転倒・踏み出し・足の浮きは計算しません。</p><div id="parameters"></div>
+<p>人体値：<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2604857/" target="_blank" rel="noreferrer">Kiemel, Elahi &amp; Jeka (2008), Table 1</a>。体重70.6 kgのうちモデルに含む脚＋HATは97.1%で、足の質量は動くリンクに含めません。体幹の描画長0.511 mは文献のHATセグメント長で、全身長ではありません。</p>
+<p><code>M θ̈ = G θ + B T − H ẍ</code>、<code>B = [[1,−1],[0,1]]</code>。床加速度による慣性力を含みます。立位制御は教育用に追加した重力補償＋PD制御：<code>Q = B T = −G θ − K θ − D θ̇ + w v V</code>。<code>K = diag(220,90)</code> N·m/rad、<code>D = diag(70,12)</code> N·m·s/rad。V = [220,45]ᵀ N·m/rad、vは背景角、wは視覚の重みです。背景への応答は両リンクで異なる大きさを仮定しています。低周波で同相、高周波で逆向きになりやすい挙動を観察するために選んだ例で、人体で同定された制御ゲインではありません。人体値以外の制御ゲイン・感覚統合は仮定で、同論文の筋モデルや実験結果の再現ではありません。基準モデルには感覚遅延・筋の活性化遅延・トルク制限は含めません。高齢者参考条件では上記の追加遅延差のみを導入しています。</p>
+<p>床指令は固有角周波数35 rad/sの臨界減衰フィルタ（加速度上限3 m/s²）、背景角指令は25 rad/sの臨界減衰フィルタを通します。高周波では実入力振幅が指令より小さくなります。物理計算は1/240秒刻みのRK4。表示の角度誇張や周波数依存の演出はありません。</p></details></section>
+</main><script>
+// Display real startup/runtime errors instead of leaving a blank visualization.
+(() => {
+ const panel=document.getElementById('startup-status');
+ let failed=false,ready=false;
+ function show(message){failed=true;panel.hidden=false;panel.setAttribute('role','alert');panel.style.color='#f5b6a8';panel.textContent='起動・実行エラー: '+message;}
+ globalThis.addEventListener('error',event=>{
+   const error=event.error;
+   show(error?error.name+': '+error.message:event.message||'必要なコードを読み込めませんでした。');
+ });
+ globalThis.addEventListener('unhandledrejection',event=>show(String(event.reason&&event.reason.message||event.reason)));
+ globalThis.twoLinkBootComplete=()=>{if(ready||failed)return;ready=true;panel.hidden=true;};
+})();
+
+</script>
+<script>
+/* Small-angle sagittal two-link model. SI units; absolute angles from vertical.
+   Anthropometry: Kiemel et al. 2008, Table 1. Controller is illustrative. */
+(function(root){
+ 'use strict';
+ const m=70.6,ma=m*.093,mb=m*.200,m2=m*.678,la=.420,lb=.378,l1=la+lb,l2=.511;
+ const ha=la*.567,hb=lb*.567,h2=l2*.626,m1=ma+mb,h1=(ma*ha+mb*(la+hb))/m1;
+ const J1=ma*(la*.643)**2+mb*(lb*.653)**2+mb*((la+hb)**2-hb**2),J2=m2*(l2*.798)**2;
+ const M=[[J1+m2*l1*l1,m2*l1*h2],[m2*l1*h2,J2]],H=[m1*h1+m2*l1,m2*h2],G=H.map(v=>9.81*v);
+ const K=[220,90],D=[70,12],V=[220,45],det=M[0][0]*M[1][1]-M[0][1]**2;
+ // Wiesmeier et al. (2015), Results / Model parameters, Fig. 8:
+ // P/mgh young=1.43, elderly=1.29; Td young=.153 s, elderly=.177 s.
+ // Applying their whole-body gain ratio to both links and ONLY the delay difference
+ // is a sensitivity experiment, not a fitted age-specific two-link controller.
+ const ageEvidence=Object.freeze({url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC4477145/',youngP:1.43,olderP:1.29,youngDelay:.153,olderDelay:.177});
+ const profiles=Object.freeze({
+   reference:Object.freeze({label:'基準（従来の教育モデル）',kScale:1,extraDelay:0}),
+   older:Object.freeze({label:'高齢者参考：P比＋遅延差',kScale:ageEvidence.olderP/ageEvidence.youngP,extraDelay:ageEvidence.olderDelay-ageEvidence.youngDelay}),
+   gainOnly:Object.freeze({label:'要因分離：P比のみ',kScale:ageEvidence.olderP/ageEvidence.youngP,extraDelay:0}),
+   delayOnly:Object.freeze({label:'要因分離：遅延差のみ',kScale:1,extraDelay:ageEvidence.olderDelay-ageEvidence.youngDelay})
+ });
+ function solve(v){return [(M[1][1]*v[0]-M[0][1]*v[1])/det,(-M[1][0]*v[0]+M[0][0]*v[1])/det]}
+ // State = [leg angle, HAT angle, angular velocities, floor x, floor v, scene angle, scene velocity].
+ function generalizedTorque(s,input,offset=0){
+   const feedback=input.feedback?input.feedback(offset):s,ratio=input.kScale??1;
+   // Artificial, instantaneous gravity compensation is retained in every profile.
+   // Only the residual PD + visual command receives the extra feedback delay.
+   return [0,1].map(i=>input.control ? -G[i]*s[i]-ratio*K[i]*feedback[i]+V[i]*input.weight*feedback[6]-D[i]*feedback[i+2] : 0);
+ }
+ function derivative(s,input,offset=0){
+   const a=Math.max(-3,Math.min(3,35**2*(input.floor-s[4])-2*35*s[5]));
+   const va=25**2*(input.scene-s[6])-2*25*s[7];
+   const q=generalizedTorque(s,input,offset);
+   const acc=solve(q.map((v,i)=>v+G[i]*s[i]-H[i]*a));
+   return [s[2],s[3],acc[0],acc[1],s[5],a,s[7],va];
+ }
+ function step(s,input,dt=1/240){
+   const k1=derivative(s,input),k2=derivative(s.map((v,i)=>v+dt*k1[i]/2),input,dt/2),k3=derivative(s.map((v,i)=>v+dt*k2[i]/2),input,dt/2),k4=derivative(s.map((v,i)=>v+dt*k3[i]),input,dt);
+   return s.map((v,i)=>v+dt*(k1[i]+2*k2[i]+2*k3[i]+k4[i])/6);
+ }
+ function torques(s,input){const Q=generalizedTorque(s,input);return [Q[0]+Q[1],Q[1]]}
+ function createSimulation(profileId='reference',initial=Array(8).fill(0)){
+   const profile=profiles[profileId];if(!profile)throw new Error('Unknown profile: '+profileId);
+   let state=initial.slice(),time=0;const samples=[{t:0,s:state.slice()}];
+   function at(t){
+     if(t<=0)return initial;
+     for(let i=1;i<samples.length;i++)if(samples[i].t>=t){const a=samples[i-1],b=samples[i],f=(t-a.t)/(b.t-a.t);return a.s.map((v,j)=>v+f*(b.s[j]-v))}
+     throw new Error('Delay history does not cover requested time');
+   }
+   return {profile,step(input,dt=1/240){
+     if(profile.extraDelay>0&&dt>profile.extraDelay)throw new Error('Step must not exceed feedback delay');
+     const start=time,forcing={...input,kScale:profile.kScale,feedback:profile.extraDelay>0?offset=>at(start+offset-profile.extraDelay):null};
+     state=step(state,forcing,dt);time+=dt;samples.push({t:time,s:state.slice()});
+     while(samples.length>2&&samples[1].t<time-profile.extraDelay-dt)samples.shift();
+     return state.slice();
+   }};
+ }
+ const api={params:{m,m1,m2,l1,l2,h1,h2,J1,J2,M,H,G,K,D,V},profiles,ageEvidence,createSimulation,step,derivative,torques};
+ root.TwoLink=api;
+ if(typeof module!=='undefined'&&module.exports)module.exports=api;
+})(globalThis);
+
+</script><script>
+(() => {
+ 'use strict';
+ const TwoLink=globalThis.TwoLink;
+ if(!TwoLink||typeof TwoLink.createSimulation!=='function')throw new Error('身体モデルを読み込めませんでした。最新版の two-link-lab.html を開いてください。');
+ const $=id=>{const element=document.getElementById(id);if(!element)throw new Error('画面の部品が見つかりません: '+id);return element},P=TwoLink.params,deg=180/Math.PI,dt=1/240;
+ let s=Array(8).fill(0),t=0,phase=0,acc=0,prev=0,auto=false,paused=false,stopped=false,drag=null,history=[],sample=0;
+ let simulation=TwoLink.createSimulation(),reference=TwoLink.createSimulation(),sRef=Array(8).fill(0);
+ const input={floor:0,scene:0,control:true,weight:.5};
+ function labels(){const visual=$('mode').value==='visual';$('position-value').value=(+$('position').value/100*(visual?3:8)).toFixed(1)+(visual?'°':' cm');$('frequency-value').value=(+$('frequency').value).toFixed(2)+' Hz';$('amplitude-value').value=(+$('amplitude').value).toFixed(1)+(visual?'°':' cm');$('weight-value').value=(+$('weight').value).toFixed(2);$('hint').textContent=visual?'左右にドラッグ → 視覚背景を傾ける（±3°）':'左右にドラッグ → 床を移動（±8 cm）'}
+ function profileLabels(){const profile=TwoLink.profiles[$('profile').value];$('selected-title').textContent=profile.label;$('profile-note').textContent=$('profile').value==='reference'?'左右とも従来の教育用モデルです。高齢者参考条件に切り替えると、文献の群間差による感度分析を行います。':`右側の感度分析：K × ${profile.kScale.toFixed(3)}、追加遅延 ${(profile.extraDelay*1000).toFixed(0)} ms。人体の年齢別同定モデルではありません。`}
+ function reset(){s=Array(8).fill(0);sRef=Array(8).fill(0);simulation=TwoLink.createSimulation($('profile').value);reference=TwoLink.createSimulation();t=phase=acc=sample=0;history=[];stopped=false;paused=false;drag=null;$('position').value=0;$('pause').textContent='一時停止';labels();profileLabels()}
+ function source(a){auto=a;$('manual').classList.toggle('active',!a);$('auto').classList.toggle('active',a)}
+ $('manual').onclick=()=>source(false);$('auto').onclick=()=>source(true);$('reset').onclick=reset;
+ $('pause').onclick=()=>{if(stopped)return;paused=!paused;$('pause').textContent=paused?'再開':'一時停止'};
+ $('mode').onchange=reset;
+ $('profile').onchange=reset;
+ ['position','frequency','amplitude','weight'].forEach(id=>$(id).oninput=()=>{if(id==='position')source(false);labels()});
+ document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{$('frequency').value=b.dataset.f;source(true);labels()});
+ const world=$('world'),referenceWorld=$('world-reference');
+ [world,referenceWorld].forEach(canvas=>{
+  canvas.onpointerdown=e=>{source(false);drag={x:e.clientX,start:+$('position').value};canvas.setPointerCapture(e.pointerId)};
+  canvas.onpointermove=e=>{if(!drag)return;$('position').value=Math.max(-100,Math.min(100,drag.start+(e.clientX-drag.x)/canvas.getBoundingClientRect().width*240));labels()};
+  canvas.onpointerup=canvas.onpointercancel=canvas.onlostpointercapture=()=>drag=null;
+ });
+ document.addEventListener('visibilitychange',()=>{prev=0;acc=0});
+ function size(canvas){const r=canvas.getBoundingClientRect(),d=Math.min(globalThis.devicePixelRatio||1,2);if(canvas.width!==Math.round(r.width*d)||canvas.height!==Math.round(r.height*d)){canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d)}const c=canvas.getContext('2d');if(!c)throw new Error('このブラウザではCanvas 2Dを利用できません。');c.setTransform(d,0,0,d,0,0);c.clearRect(0,0,r.width,r.height);return {c,w:r.width,h:r.height}}
+ function line(c,points,color,width=2){c.strokeStyle=color;c.lineWidth=width;c.lineCap='round';c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke()}
+ function drawBody(canvas,body){
+  const {c,w,h}=size(canvas),commonWidth=Math.min(world.getBoundingClientRect().width,referenceWorld.getBoundingClientRect().width),scale=Math.min(h*.57,commonWidth*.9),ground=h*.83,ox=w/2+body[4]*scale;
+  c.save();c.translate(w/2,ground);c.rotate(body[6]);for(let x=-w;x<w;x+=48)line(c,[[x,-h],[x,30]],'#26384b',1);c.restore();
+  c.setLineDash([4,6]);line(c,[[w/2,ground],[w/2,45]],'#748596',1);c.setLineDash([]);
+  const hip=[ox+Math.sin(body[0])*P.l1*scale,ground-Math.cos(body[0])*P.l1*scale],head=[hip[0]+Math.sin(body[1])*P.l2*scale,hip[1]-Math.cos(body[1])*P.l2*scale];
+  c.fillStyle='#385365';c.fillRect(0,ground+8,w,25);for(let i=-15;i<16;i++){const x=w/2+i*40+body[4]*scale;line(c,[[x,ground+9],[x-14,ground+31]],'#6c8593',2)}
+  c.fillStyle='#d9e4ee';c.fillRect(ox-20,ground-3,43,10);line(c,[[ox,ground],hip],'#59ddc8',15);line(c,[hip,head],'#ffab79',20);
+  c.fillStyle='#e8eff5';for(const p of [[ox,ground],hip]){c.beginPath();c.arc(...p,6,0,Math.PI*2);c.fill()}c.beginPath();c.arc(head[0],head[1]-13,13,0,Math.PI*2);c.fill();
+  const comX=body[4]+(P.H[0]*body[0]+P.H[1]*body[1])/(P.m1+P.m2),comY=(P.H[0]+P.H[1])/(P.m1+P.m2);
+  c.fillStyle='#f2d777';c.beginPath();c.arc(w/2+comX*scale,ground-comY*scale,5,0,Math.PI*2);c.fill();
+  c.font='12px system-ui';c.fillStyle='#aebdce';c.fillText('● 重心',12,h-18);c.fillText('背景 '+(body[6]*deg).toFixed(2)+'°',12,h-39);line(c,[[w-78,h-28],[w-78+.1*scale,h-28]],'#aebdce',2);c.fillText('10 cm',w-78,h-38);
+ }
+ function draw(){
+  drawBody(referenceWorld,sRef);drawBody(world,s);
+  $('leg').textContent=(s[0]*deg).toFixed(2)+'°';$('hat').textContent=(s[1]*deg).toFixed(2)+'°';$('hip').textContent=((s[1]-s[0])*deg).toFixed(2)+'°';$('floor').textContent=(s[4]*100).toFixed(1)+' cm';
+  $('leg-reference').textContent=(sRef[0]*deg).toFixed(2)+'°';$('hat-reference').textContent=(sRef[1]*deg).toFixed(2)+'°';$('hip-reference').textContent=((sRef[1]-sRef[0])*deg).toFixed(2)+'°';$('floor-reference').textContent=(sRef[4]*100).toFixed(1)+' cm';
+  $('status').textContent=stopped?'いずれかの条件が20°に達したため停止。リセットしてください。':paused?'一時停止中':(auto?'正弦波入力':'手動入力')+' / '+(input.control?'固定の姿勢制御あり':'制御なし・不安定');
+  const showRef=$('overlay').checked&&$('profile').value!=='reference';
+  const chart=size($('trace')),cx=chart.c,cw=chart.w,ch=chart.h,mx=Math.max(1,...history.flatMap(v=>v.slice(1,showRef?5:4).map(Math.abs)))*1.15;
+  cx.font='11px system-ui';for(const v of [-mx,0,mx]){const y=ch/2-v/mx*(ch/2-18);line(cx,[[42,y],[cw-10,y]],'#334353',1);cx.fillStyle='#9cacc0';cx.fillText(v.toFixed(1)+'°',2,y+4)}
+  ['#59ddc8','#ffab79','#c6b5ff'].forEach((col,j)=>line(cx,history.map(v=>[42+(v[0]-Math.max(0,t-12))/12*(cw-52),ch/2-v[j+1]/mx*(ch/2-18)]),col));
+  if(showRef){cx.setLineDash([5,4]);line(cx,history.map(v=>[42+(v[0]-Math.max(0,t-12))/12*(cw-52),ch/2-v[4]/mx*(ch/2-18)]),'#f2f5fa');cx.setLineDash([])}
+  if(history.length){const rms=j=>Math.sqrt(history.reduce((sum,v)=>sum+v[j]**2,0)/history.length);$('comparison').textContent=`${TwoLink.profiles[$('profile').value].label} / 表示区間の股関節角RMS：選択条件 ${rms(3).toFixed(3)}°・基準 ${rms(4).toFixed(3)}°（過渡応答を含む）`}else $('comparison').textContent='条件を選び、同じ入力で基準との差を観察できます。';
+ }
+ function frame(now){if(!prev)prev=now;const elapsed=Math.min((now-prev)/1000,.08);prev=now;
+  if(!paused&&!stopped){acc+=elapsed;while(acc>=dt){const visual=$('mode').value==='visual';phase+=2*Math.PI*(+$('frequency').value)*dt;const value=auto?Math.sin(phase)*(+$('amplitude').value):+$('position').value/100*(visual?3:8);input.floor=visual?0:value/100;input.scene=visual?value/deg:0;input.control=$('control').checked;input.weight=+$('weight').value;s=simulation.step(input,dt);sRef=reference.step(input,dt);t+=dt;acc-=dt;if(++sample%8===0){history.push([t,s[0]*deg,s[1]*deg,(s[1]-s[0])*deg,(sRef[1]-sRef[0])*deg]);while(history.length&&history[0][0]<t-12)history.shift()}if([...s,...sRef].some(v=>!Number.isFinite(v))||Math.max(...s.slice(0,2).map(Math.abs),...sRef.slice(0,2).map(Math.abs))>20/deg){stopped=true;acc=0;break}}}else acc=0;
+  draw();if(globalThis.twoLinkBootComplete)globalThis.twoLinkBootComplete();requestAnimationFrame(frame);
+ }
+ $('parameters').innerHTML='<table><tr><th>量</th><th>脚（両脚）</th><th>HAT（頭・腕・体幹）</th></tr>'+[['質量 / kg',P.m1,P.m2],['長さ / m',P.l1,P.l2],['近位端から重心 / m',P.h1,P.h2],['近位端まわり慣性 / kg·m²',P.J1,P.J2]].map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1].toFixed(3)+'</td><td>'+r[2].toFixed(3)+'</td></tr>').join('')+'</table>';
+ reset();requestAnimationFrame(frame);
+})();
+
+
+</script></body></html>
+
+
+

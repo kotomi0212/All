@@ -1,0 +1,5 @@
+﻿trial,subject,trial_number,height_m,body_mass_kg,samples,duration_s,T_v_s,gamma_v_s,W_v,fit_percent_gain,axis_mapping,fit_band_hz,output_mode,fit_mode
+20261121_otsubo_90s_multicosine_001,otsubo,1,1.78,61.682,7999,79.98044024733827,0.32758218812107104,0.02955048729694954,0.09020785735159685,32.54490763012744,Rx_subject=Fy_plate; Ny_subject=-Mx_plate,0.05-1.50,acceleration,gain_only
+20261121_otsubo_90s_multicosine_002,otsubo,2,1.78,61.704,7999,79.98032834351761,0.19309009126882914,0.023584630546064585,0.12214314256669416,37.06153873324667,Rx_subject=Fy_plate; Ny_subject=-Mx_plate,0.05-1.50,acceleration,gain_only
+20261121_sadanaka_90s_multicosine_001,sadanaka,1,1.67,69.938,8000,79.99013534327969,0.10290238165642167,0.014416141988921462,0.14009531904766964,40.027307168914106,Rx_subject=Fy_plate; Ny_subject=-Mx_plate,0.05-1.50,acceleration,gain_only
+20261121_sadanaka_90s_multicosine_002,sadanaka,2,1.67,69.95,7999,79.98051901126746,0.3348989479974987,0.01341656989389234,0.04006154684604308,33.18541052675891,Rx_subject=Fy_plate; Ny_subject=-Mx_plate,0.05-1.50,acceleration,gain_only

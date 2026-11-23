@@ -1,0 +1,81 @@
+                                               視覚のバランス同定について
+                                                                                      2026/11/12 高知工科大学 園部
+
+
+  バランス制御モデル[1]における重心制御を既知として，視覚フィードバック部分のみを VR 刺激
+ から同定できれば，個人の視覚の過敏さを評価できます．．
+
+
+  システムとして，
+
+    Jb      
+    + mb lb                      −mb lb Xs (t ) + N a (t )
+               xb (t ) − mb gxb (t ) =                                                                 (1)
+    lb      
+
+
+            −k p { xb (t − td ) − xb (t − td )} − kd xb (t − td )
+   N a (t ) =                                                                                          (2)
+
+
+
+                         −γ v X s (t )
+   Tv xb (t ) + xb (t ) =                                                                             (3)
+
+
+  に対し，式(1)と式(2)は既知として，式(3)の部分だけを調整しようという考え方です．式(3)の構造
+ を変更しても構いません．
+
+
+  物理パラメータの部分は，論文の表から，体重 M(kg)と身長 H(m)から近似的に計算できます．
+                                  Segment                  Symbol           Male       Female
+                                                              mb            0.978M       0.978M
+                                      Body                    Jb         0.0425MH2    0.0441MH2
+                                                              lb            0.531H       0.523H
+                                                              m1            0.322M       0.352M
+                                     Lower                    J1         0.00223MH2   0.00249MH2
+                                     body                     l1            0.285H       0.291H
+                                                              L1            0.460H       0.460H
+                                                              m2            0.656M       0.626M
+                                     Upper
+                                                              J2          0.0114MH2   0.0121MH2
+                                     body
+                                                              l2            0.191H       0.193H
+                                                              mf            0.022M       0.022M
+                                      Foot                    lf            0.015H       0.015H
+                                                              Lf            0.038H       0.038H
+
+
+  制御パラメータ kp, kd は，体型差を考慮した正規化ゲインで表現できます．
+
+               kp                         kd
+=Kp         =          , Kd                                                                            (4)
+            Jb                        Jb
+               + mb lb                   + mb lb
+            lb                        lb
+
+
+
+
+                                                                     1
+       この 3 つのパラメータを決めてしまいたいのですが，そのやり方は 2 通り考えられます．
+  A.    健常者データの平均とする．
+  B.    遅延時間を適当に決め（td = 0.15 とする），比例ゲインと微分ゲインは最適値とする．
+
+
+  A の場合の[1]の文献の 3 日間の平均値は，
+=K p 10.53,
+        =   K d 3.97,
+                 =    td 0.155[s]
+  でした．B も必要であればすぐ計算できます．（Kp だけもう少し高い値になり，Kd はほぼ同じだと
+  思います）
+
+            [1]      M. Sonobe, N. Miura, Identification of standing balance system considering center of mass
+         control for support surface sway, IEEE Trans. Neural Syst. Rehab. Eng. 33 (2025) 4580–4589.
+         https://doi.org/10.1109/TNSRE.2025.3632867.
+
+
+
+
+                                                        2
+
