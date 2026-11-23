@@ -111,7 +111,7 @@ function connect(){
   const socket=new WebSocket(url);ws=socket;probes.length=0;lastPong=-Infinity;config=null;
   socket.onopen=()=>{
     if(ws!==socket)return;attempt=0;
-    send({role:'quest',token,user_agent:navigator.userAgent,client_version:'pc-control-v3'});
+    send({role:'quest',token,user_agent:navigator.userAgent,client_version:'pc-control-v4'});
     send({type:'capabilities',secure_context:window.isSecureContext,xr_available:!!navigator.xr,user_agent:navigator.userAgent});ui(true);
   };
   socket.onmessage=e=>{if(ws===socket)onMessage(e);};

@@ -59,3 +59,5 @@ node research_sync/test_fixation_target.js
 テストの被験者情報と床反力は合成データです。実機の取得遅延と光学的表示遅延は未校正です。
 
 操作の詳細: [注視条件と同期](FIXATION_README.md)、[CSV保存](CSV保存の使い方.md)、[90秒刺激](VISUAL_STIMULUS.md)。
+
+新規予備試験: [低周波・少数成分の刺激設計](PILOT_DESIGN.md)。0.20 Hz単一40秒、5周波数100秒、静止60秒と外部IMUのゼロ検出を追加。

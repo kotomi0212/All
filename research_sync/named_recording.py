@@ -10,6 +10,9 @@ import tempfile
 
 STIMULI={'multicosine':'90s_multicosine','none':'30s_no_fixation','dot':'30s_red_dot','spinner':'30s_loading'}
 
+STIMULI.update({'pilot_rest':'60s_rest','pilot_five_x1p4':'100s_five_x1p4'})
+STIMULI.update({f'pilot_{kind}_x{n}':f'{T}s_{kind}_x{n}' for kind,T in [('single',40),('five',100)] for n in (1,2,3)})
+
 def participant_info(value):
     subject=str(value['subject']).strip();height=float(value['height_cm']);number=int(value['trial_number'])
     if not subject or len(subject)>80:raise ValueError('被験者名を1～80文字で入力してください')
