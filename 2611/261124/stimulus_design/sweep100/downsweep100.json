@@ -1,0 +1,37 @@
+{
+  "status": "design_only_not_installed_in_VR",
+  "duration_s": 100,
+  "start_frequency_hz": 0.3,
+  "end_frequency_hz": 0.05,
+  "sweep_duration_s": 70.0,
+  "analysis_interval_s": [
+    5,
+    75
+  ],
+  "onset_interval_s": [
+    0,
+    5
+  ],
+  "offset_interval_s": [
+    75,
+    90
+  ],
+  "return_interval_s": [
+    90,
+    100
+  ],
+  "acceleration_amplitude_m_s2": 0.01666464946520325,
+  "phase_rad": 2.3362977909471994,
+  "frequency_formula": "f(t)=0.30*exp(log(0.05/0.30)*(t-5)/70), 5<=t<=75",
+  "acceleration_formula": "a(t)=A*cos(2*pi*0.30*expm1(k*(t-5))/k+phase), k=log(0.05/0.30)/70",
+  "integration": "1ms cumulative trapezoid; 0.5ms convergence checked",
+  "maxima": {
+    "max_abs_displacement_m": 0.32442796393382717,
+    "max_abs_velocity_m_s": 0.06080198387023722,
+    "max_abs_acceleration_m_s2": 0.018722155394162103
+  },
+  "max_abs_acceleration_analysis_m_s2": 0.0166646494627366,
+  "return_start_position_m": 0.32427724730793184,
+  "cycles_in_sweep": 9.766935964646828,
+  "note": "Amplitude is constant only in 5..75s. Onset/offset and return are excluded. Short sweep is not quasi-static at all frequencies. No post-hoc drift subtraction or amplitude renormalization."
+}
