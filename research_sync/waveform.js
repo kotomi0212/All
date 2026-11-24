@@ -1,5 +1,19 @@
 (function(root){
   function evaluate(t,c){
+    if(c.waveform==='sampled_centered_sweep'){
+      const T=c.duration_s,h=c.sample_step_s,s=c.samples_xva;
+      if(t<0)return{x:s[0][0],v:0,a:0};
+      if(t>T)return{x:s[s.length-1][0],v:0,a:0};
+      const i=Math.min(s.length-2,Math.floor(t/h)),u=(t-i*h)/h;
+      const [x0,v0,a0]=s[i],[x1,v1,a1]=s[i+1];
+      // Quintic Hermite interpolation: x, v, a are derivatives of the same curve.
+      const c0=x0,c1=h*v0,c2=h*h*a0/2;
+      const dx=x1-c0-c1-c2,dv=h*v1-c1-2*c2,da=h*h*a1-2*c2;
+      const c3=10*dx-4*dv+da/2,c4=-15*dx+7*dv-da,c5=6*dx-3*dv+da/2;
+      return{x:c0+u*(c1+u*(c2+u*(c3+u*(c4+u*c5)))),
+        v:(c1+u*(2*c2+u*(3*c3+u*(4*c4+u*5*c5))))/h,
+        a:(2*c2+u*(6*c3+u*(12*c4+u*20*c5)))/(h*h)};
+    }
     if(c.waveform==='pilot_acceleration_multicosine'){
       const T=c.duration_s,R=c.ramp_s;if(t<=0||t>=T)return{x:0,v:0,a:0};
       let x=0,v=0,a=0;

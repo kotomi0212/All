@@ -1,0 +1,78 @@
+{
+  "multicosine": {
+    "status": "design_only_not_installed_in_VR",
+    "waveform": "ten_component_acceleration_multicosine",
+    "duration_s": 100,
+    "analysis_interval_s": [
+      10,
+      90
+    ],
+    "ramp_s": 10,
+    "period_s": 20,
+    "analysis_cycles": 4,
+    "frequencies_hz": [
+      0.05,
+      0.1,
+      0.2,
+      0.3,
+      0.45,
+      0.6,
+      0.7,
+      0.9,
+      1.2,
+      1.5
+    ],
+    "phases_rad": [
+      1.756693872863341,
+      2.949256106856825,
+      0.4136792173048325,
+      1.8104038927117498,
+      -0.5644287357409272,
+      -0.17939519533191284,
+      2.114168355667605,
+      2.4177044301855357,
+      -1.6498776009006335,
+      2.3519966798435616
+    ],
+    "acceleration_component_m_s2": 0.01666464946520325,
+    "normalization": "none",
+    "maxima": {
+      "max_abs_displacement_m": 0.21992478328521287,
+      "max_abs_velocity_m_s": 0.07444950030494746,
+      "max_abs_acceleration_m_s2": 0.12812226383075
+    },
+    "formula": "x0=-sum(A*cos(2*pi*f*t+phi)/(2*pi*f)^2); x=e*x0; v=e*v0+e_dot*x0; a=e*a0+2*e_dot*v0+e_ddot*x0",
+    "note": "Equal component acceleration only in the 10..90s core; startup/shutdown add sidebands. No claim of stronger SNR than the old stimulus."
+  },
+  "sweep": {
+    "status": "design_only_not_installed_in_VR",
+    "waveform": "constant_acceleration_log_downsweep",
+    "duration_s": 290,
+    "analysis_interval_s": [
+      10,
+      250
+    ],
+    "sweep_duration_s": 240,
+    "start_frequency_hz": 0.7,
+    "end_frequency_hz": 0.05,
+    "onset_s": 10,
+    "offset_s": 20,
+    "return_to_neutral_s": 20,
+    "acceleration_amplitude_m_s2": 0.01666464946520325,
+    "phase_rad": -0.6294562621708228,
+    "frequency_formula": "f=0.70*exp(log(0.05/0.70)*(t-10)/240) for 10<=t<=250",
+    "acceleration_formula": "a=A*cos(phase), phase=2*pi*0.70*expm1(k*(t-10))/k+phi in core; acceleration envelope outside core",
+    "integration": "cumulative trapezoid, 1ms; validated against 0.5ms",
+    "phase_selection": "zero net acceleration impulse over 0..270s; no linear drift subtraction",
+    "maxima": {
+      "max_abs_displacement_m": 0.23309195918052322,
+      "max_abs_velocity_m_s": 0.05427599230673118,
+      "max_abs_acceleration_m_s2": 0.016664649465200736
+    },
+    "position_before_return_m": 0.23058943763593667,
+    "sweep_cycles": 59.11201634363238,
+    "note": "Not periodic. Reaching zero speed at 270s leaves a position offset; a separate quintic return ends at 290s. Analyze only 10..250s. No automatic amplitude normalization."
+  },
+  "max_relative_multicosine_amplitude_error": 8.881784197001252e-16,
+  "sweep_displacement_max_integration_difference_m": 2.083095723692807e-09
+}

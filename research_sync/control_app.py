@@ -31,7 +31,7 @@ class ControlApp:
         style=ttk.Style(root);style.configure('Title.TLabel',font=('Yu Gothic UI',22,'bold'));style.configure('Card.TLabel',font=('Yu Gothic UI',13))
         frame=ttk.Frame(root,padding=24);frame.pack(fill='both',expand=True)
         ttk.Label(frame,text='VR × ComBalance 計測',style='Title.TLabel').pack(anchor='w')
-        ttk.Label(frame,text='単一周波数／5周波数予備試験／従来条件 ｜ USB接続 ｜ CSV保存',padding=(0,7)).pack(anchor='w')
+        ttk.Label(frame,text='中心固定スイープ／10周波数マルチコサイン／予備試験 ｜ USB接続 ｜ CSV保存',padding=(0,7)).pack(anchor='w')
         ttk.Label(frame,text='初回だけQuest Browserで http://localhost:8443 を開き、VRボタンで入ってください。\n以後の開始・停止はこのPCで操作できます。',padding=(0,8)).pack(anchor='w')
         self.preference_path=ROOT/'recordings/naming_preferences.json'
         try:prefs=json.loads(self.preference_path.read_text(encoding='utf-8'))
@@ -46,16 +46,8 @@ class ControlApp:
         for i,(key,title) in enumerate([('quest','Quest接続'),('vr','VR描画'),('force','ComBalance'),('clock','時刻対応')]):
             box=ttk.LabelFrame(cards,text=title,padding=12);box.grid(row=0,column=i,sticky='nsew',padx=4);cards.columnconfigure(i,weight=1)
             var=tk.StringVar(value='未接続');self.cards[key]=var;ttk.Label(box,textvariable=var,style='Card.TLabel').pack(anchor='w')
-        self.conditions={'90秒 マルチコサイン':'multicosine','30秒 注視点なし':'none','30秒 赤い固定点':'dot','30秒 ローディング表示':'spinner'}
-        self.conditions.update({'静止60秒：ノイズ確認':'pilot_rest'})
-        for kind,title,T in [('single','単一0.20 Hz',40),('five','5周波数',100)]:
-            for n in ((1,1.4,2,3) if kind=='five' else (1,2,3)):
-                key=f'pilot_{kind}_x{str(n).replace(chr(46),chr(112))}'
-                try:
-                    c=json.loads((ROOT/'pilot_profiles'/(key+'.json')).read_text(encoding='utf-8'))
-                    blocked='【上限超過・開始不可】' if not c['enabled'] else ''
-                except OSError:blocked='【設定未生成】'
-                self.conditions[f'{title} {T}秒・成分振幅{n}倍'+blocked]=key
+        from .study_stimuli import available_conditions
+        self.conditions=available_conditions()
         self.condition=tk.StringVar(value=next(iter(self.conditions)))
         self.condition_box=ttk.Combobox(frame,textvariable=self.condition,values=list(self.conditions),state='readonly',width=56)
         self.condition_box.pack(anchor='w');self.condition_box.bind('<<ComboboxSelected>>',lambda e:self.start_button.configure(text='選択した試行を予約'))
@@ -135,7 +127,7 @@ class ControlApp:
                     try:info=await asyncio.to_thread(self.api);break
                     except Exception:continue
                 else:raise TimeoutError('計測サーバーの起動が確認できません')
-            if info['status'].get('service_version')!='pc-acquisition-v5':raise RuntimeError('古い計測サーバーが起動しています')
+            if info['status'].get('service_version')!='pc-acquisition-v6':raise RuntimeError('古い計測サーバーが起動しています。旧計測ソフトを終了し、このソフトで再接続してください')
             if not info['status']['vendor_enabled']:raise RuntimeError('このサーバーはComBalance実機取得が無効です')
             if self.connection_task is None or self.connection_task.done():self.connection_task=asyncio.create_task(self.connection_loop())
             self.events.put(('prepared',None))

@@ -1,0 +1,39 @@
+{
+  "status": "design_only_not_installed_in_VR",
+  "duration_s": 90.0,
+  "start_frequency_hz": 0.7,
+  "end_frequency_hz": 0.05,
+  "frequency_definition": "displacement carrier instantaneous frequency; acceleration frequency differs slightly due to exact chirp envelope compensation",
+  "frequency_shape_b": -0.04233545769561711,
+  "frequency_formula": "f(t)=0.70*exp(log(0.05/0.70)*u+b*u*(1-u)); u=t/90",
+  "acceleration_amplitude_m_s2": 0.01666464946520325,
+  "displacement_center_m": 0.0008613703769529586,
+  "position_formula": "x(t)=center-r(t)*cos(phi(t)); phi_dot=2*pi*f; r from BVP ensuring hypot(r*w^2-r_ddot,2*r_dot*w+r*w_dot)=A",
+  "envelope_equation": "r=A*y/w^2; y_ddot=4*lambda*y_dot-(4*lambda^2-2*lambda_dot)*y+w^2*(y-sqrt(1-((2*y_dot-3*lambda*y)/w)^2)); y_dot(0)=y_dot(90)=0",
+  "boundary_phase_rule": "integral(w dt)+atan2(-2*lambda0,w0)-atan2(-2*lambda90,w90)=44*pi",
+  "bvp_tolerance": 1e-08,
+  "phase_rad": 0.013547009834891368,
+  "maxima": {
+    "max_abs_displacement_m": 0.16452549900343896,
+    "max_abs_velocity_m_s": 0.046849920938734975,
+    "max_abs_acceleration_m_s2": 0.016664649457979543
+  },
+  "initial_state": [
+    0.0,
+    0.0,
+    0.016664266934155868
+  ],
+  "final_state": [
+    -0.16452549900343896,
+    6.118022755075003e-14,
+    0.016587442541908765
+  ],
+  "max_acceleration_envelope_error": 3.469446951953614e-18,
+  "acceleration_frequency_at_endpoints_hz": [
+    0.6998947827882602,
+    0.04861555876938743
+  ],
+  "extra_phases_s": 0,
+  "after_trial": "Hold final position without reset; no return interval",
+  "notes": "Fixed displacement envelope center, not zero moving-average over an arbitrary window. x starts at zero and endpoints have zero velocity. Acceleration steps at trial boundaries. No drift subtraction. Frequency shape slightly adjusted from exponential. Carrier spans 0.70..0.05Hz; acceleration instantaneous frequency is explicitly exported."
+}

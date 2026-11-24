@@ -51,7 +51,7 @@ async def run(args):
     def record(kind,**data):
         log.write(json.dumps(dict(kind=kind,pc_monotonic_s=time.perf_counter(),pc_epoch_s=time.time(),**data),ensure_ascii=False)+'\n')
     def snapshot():
-        return dict(type='system_status',service_version='pc-acquisition-v5',**state,
+        return dict(type='system_status',service_version='pc-acquisition-v6',**state,
             pc_now_s=time.perf_counter(),quest_connected='quest' in list(peers.values()),
             vendor_enabled=bool(args.vendor_directory),scene=config['scene'],
             busy=trial is not None or capture is not None or bool(finishing))
@@ -72,6 +72,10 @@ async def run(args):
                 self.send_response(302);self.send_header('Location',f'/{page}#token={token}');self.end_headers();return
             if path in ('/quest.html','/operator.html'):
                 html=(root/path[1:]).read_text(encoding='utf-8')
+                if path=='/operator.html':
+                    from html import escape
+                    from .study_stimuli import available_conditions
+                    html=html.replace('<!--STIMULUS_OPTIONS-->',''.join(f'<option value="{escape(key)}">{escape(label)}</option>' for label,key in available_conditions().items()))
                 bootstrap='<script>history.replaceState(null,"",location.pathname+"#token="+'+json.dumps(token)+');window.controlWsPort='+str(args.ws_port)+';</script>'
                 html=html.replace('<script',bootstrap+'<script',1)
                 for name in ('quest.js','waveform.js','operator.js','fixation.js','fixation_target.js'):
@@ -160,7 +164,7 @@ async def run(args):
             if role=='quest' and 'quest' in peers.values():await ws.close(1008,'one Quest per session');return
             peers[ws]=role
             if hello.get('subscribe_status'):subscribers.add(ws)
-            if role=='quest':rtts.clear();state.update(sync_probes=0,quest_last_seen_s=time.perf_counter(),quest_software_current=hello.get('client_version')=='pc-control-v4' or args.allow_desktop_simulation)
+            if role=='quest':rtts.clear();state.update(sync_probes=0,quest_last_seen_s=time.perf_counter(),quest_software_current=hello.get('client_version')=='pc-control-v5' or args.allow_desktop_simulation)
             record('connected',role=role)
             await ws.send(json.dumps(dict(type='config',stimulus=config,start_delay_s=args.start_delay,vendor_enabled=bool(args.vendor_directory))))
             async for raw in ws:
@@ -196,7 +200,7 @@ async def run(args):
                     if trial or capture is not None or finishing or 'quest' not in peers.values():
                         await ws.send(json.dumps(dict(type='error',message='Questの接続と、前の試行の保存完了を確認してください')));continue
                     condition=msg.get('condition','multicosine')
-                    if condition not in ('multicosine','none','dot','spinner','pilot_rest','pilot_five_x1p4',*[f'pilot_{kind}_x{n}' for kind in ('single','five') for n in (1,2,3)]):
+                    if condition not in ('study_sweep90','study_multicosine10','multicosine','none','dot','spinner','pilot_rest','pilot_five_x1p4',*[f'pilot_{kind}_x{n}' for kind in ('single','five') for n in (1,2,3)]):
                         await ws.send(json.dumps(dict(type='error',message='Unknown visual condition')));continue
                     if state['height_pending']:
                         await ws.send(json.dumps(dict(type='error',message='目線高さの取得完了を待ってください')));continue
