@@ -1,0 +1,87 @@
+﻿元CSVによるCOM T・γゲイン同定（2026-11-24）
+
+結論: 既存のVR速度→身体部COM変位モデルで、安定した有限のT・γは確定できない。
+主区間5<=t<35秒の4試行同時推定はT→∞、γ→∞の極限。
+gamma_over_Tはその極限での比であり、個別のT・γの推定値ではない。
+探索上限を同定値として報告していない。区間別に有限値も現れるが再現しない。
+
+入力・元データ:
+Desktop/1022csvのgridtrans02/05、各00001/00002の4ファイル。
+各6000点、100 Hz、0..59.99秒、cp932。SHA256と全ヘッダーはsource_audit.json。
+身長148cm、女性、体重は試行順に43.4/43.5/43.5/43.7kg（各CSV値を使用）。
+Fz平均/gは約44.45/44.50/44.53/44.66kgで、メタデータ体重とは一致しない。
+ファイル名による0.2/0.5Hz、視覚変位片振幅0.0246mを引き継ぐ。
+内部試験名は4件ともgridtrans02。入力の位相は未同期のため使用しない。
+固定床上の視覚並進を暫定仮定。実際に床が動く場合はこのモデルを採用できない。
+刺激開始終了ログはCSVにない。5..35秒は既存解析と比較する主区間であり、
+刺激定常区間を独立確認したものではない。他の5区間は感度解析。
+
+COM再構成と同定:
+処理済みFx/My列の単位N/N･mを確認。AP候補Rx=Fx,Ny=My。
+My/(M*g)とCSVのAP COP=xpの相関は0.9988以上で、この軸候補と整合。
+ただしこれは物理的な符号校正の証明ではない。
+mb=.978M,Jb=.0481MH²,lb=.504H,Lf=.039H（引継ぎの2019女性係数）。
+xb=(My-c*Fx)/(mb*g), c=Jb/(mb*lb)+Lf+lb。gを含める。
+CSVのxb列は比較用。別の2025身体係数へ暗黙に切り替えていない。
+モーメント原点12.3mmの補正有無が確定しないため0と±12.3mmを保存。
+さらにMy反転も感度解析として保存し、適合が良いことを根拠に符号を選ばない。
+Fx/Myはエクスポート済み列。raw接頭辞列も校正前の生信号とは断定しない。
+CSVヘッダーにHP0.1Hz/LP4Hzの記載あり。列別の適用処理・次数は不明。
+追加フィルタと未知のフィルタ応答の逆補正は適用していない。
+
+定数+直線トレンド+cos+sinの同時最小二乗で刺激周波数の片振幅を抽出。
+出力COM変位振幅/(0.0246*2πf)が入力速度→COM変位ゲイン[s]。
+Gx=-kp*γ*exp(-td*s)/[(1+T*s)*{(kp+kd*s)*exp(-td*s)-mb*g}]。
+kp=10.53*(Jb/lb+mb*lb),kd=3.97*(Jb/lb+mb*lb),td=.155秒。
+従来どおり制御モデルの慣性項を省略。Tとγの単位はともに秒。
+4試行の線形ゲインSSEを等重みで最小化。二周波数の解析解とT=0/∞を比較。
+同じ身長・係数では単位γ,T=0のプラント振幅qは質量によらず一致する。
+正規化ゲイン比=(平均gain_0.5/平均gain_0.2)/(q_0.5/q_0.2)。
+有限T>0で可能な比は0.4より大きく1未満。主区間の比0.338491は範囲外。
+harmonic_partial_R2はトレンド残差に対する刺激周波数追加の説明率。
+信頼区間・コヒーレンス・時系列モデル適合率ではない。
+
+独立の力学的一致チェック:
+足部静止条件で身体部COM加速度=-Fx/mbを別に算出。
+その周波数係数/[-(2πf)²]はforce_equivalent_displacementとして比較。
+これは加速度の周波数領域換算であり、直接測定変位ではない。
+主区間のEq3変位から換算した加速度/床反力加速度の振幅比は0.038..0.212、
+位相差も約-107,+121,+123,+14度で一致しない。
+同一CSV内の相対位相なので刺激との時計同期は不要。
+この不一致の原因は、列別処理、軸符号、単一剛体近似、非定常性などを分離できない。
+DC原点や身長体重を調整して整合性を保証したものではない。
+My反転では主区間T約0.428秒、γ約0.0145秒になるが採用根拠にはしない。
+
+次に必要な証拠:
+固定床の視覚刺激であること、刺激の開始終了（記録時間との大まかな対応で可）、
+当日の被験者方向、既知荷重によるFx/My符号・原点、列別フィルタ処理。
+これらが得られれば区間・軸・処理を確定し再実行する。
+
+検証: 未知位相/オフセット/ドリフトを含む合成波の振幅回復、
+既知T=.02/1.2/30秒・γ=.04秒の回復、T=0/∞の境界判定を実行時assertで確認。
+元CSV、既存頭部解析、旧結果は変更していない。
+
+主区間の振幅・ゲイン:
+                          trial  displacement_peak_m  measured_gain_s  harmonic_partial_R2
+261022_gridtrans02_seguchi00001             0.000343         0.011083             0.014241
+261022_gridtrans02_seguchi00002             0.000215         0.006943             0.006296
+261022_gridtrans05_seguchi00001             0.000110         0.001425             0.001349
+261022_gridtrans05_seguchi00002             0.000074         0.000954             0.001193
+
+区間別4試行同時推定:
+   output  start_s  end_s       selection      T_s  gamma_s  gamma_over_T           status      SSE  normalized_gain_ratio  feasible_ratio_lower  feasible_ratio_upper
+eq3_Fx_My        5     35 all_four_trials      inf      inf      0.003076 T_infinite_limit 0.000009               0.338491                   0.4                   1.0
+eq3_Fx_My        5     25 all_four_trials 0.235035 0.002108           NaN           finite 0.000049               0.838817                   0.4                   1.0
+eq3_Fx_My       10     30 all_four_trials 0.000000 0.001829           NaN     T_zero_limit 0.000006               1.091475                   0.4                   1.0
+eq3_Fx_My       15     35 all_four_trials 0.000000 0.001321           NaN     T_zero_limit 0.000045               1.040786                   0.4                   1.0
+eq3_Fx_My       10     50 all_four_trials 0.207329 0.001447           NaN           finite 0.000018               0.865901                   0.4                   1.0
+eq3_Fx_My        0     60 all_four_trials 0.000000 0.000571           NaN     T_zero_limit 0.000002               1.316794                   0.4                   1.0
+
+主区間の出力定義・符号・原点感度:
+                       output  start_s  end_s       selection      T_s  gamma_s  gamma_over_T           status      SSE  normalized_gain_ratio  feasible_ratio_lower  feasible_ratio_upper
+                    eq3_Fx_My        5     35 all_four_trials      inf      inf      0.003076 T_infinite_limit 0.000009               0.338491                   0.4                   1.0
+       eq3_origin_minus12p3mm        5     35 all_four_trials      inf      inf      0.003123 T_infinite_limit 0.000008               0.334115                   0.4                   1.0
+        eq3_origin_plus12p3mm        5     35 all_four_trials      inf      inf      0.003033 T_infinite_limit 0.000009               0.343401                   0.4                   1.0
+              eq3_opposite_My        5     35 all_four_trials 0.427608 0.014518           NaN           finite 0.000071               0.677867                   0.4                   1.0
+                    vendor_xb        5     35 all_four_trials      inf      inf      0.002248 T_infinite_limit 0.000010               0.372347                   0.4                   1.0
+force_equivalent_displacement        5     35 all_four_trials      inf      inf      0.054541 T_infinite_limit 0.001436               0.102012                   0.4                   1.0
