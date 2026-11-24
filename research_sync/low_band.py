@@ -20,7 +20,8 @@ def envelope(t,T,R):
 
 def evaluate(t,c):
     t=np.atleast_1d(t).astype(float);w=2*np.pi*np.array(c['frequencies_hz']);z=t[:,None]*w+np.array(c['phases_rad'])
-    A=c['acceleration_component_m_s2'];x=-A*(np.cos(z)/w**2).sum(1);v=A*(np.sin(z)/w).sum(1);a=A*np.cos(z).sum(1)
+    A=np.asarray(c.get('acceleration_components_m_s2',c.get('acceleration_component_m_s2')),float)
+    x=-(A*np.cos(z)/w**2).sum(1);v=(A*np.sin(z)/w).sum(1);a=(A*np.cos(z)).sum(1)
     e,d,dd=envelope(t,c['duration_s'],c['ramp_s']);outside=(t<=0)|(t>=c['duration_s'])
     return tuple(np.where(outside,0,y) for y in (e*x,e*v+d*x,e*a+2*d*v+dd*x))
 
@@ -37,8 +38,9 @@ def peaks(c):
 def check_limits(c):
     f=np.asarray(c['frequencies_hz'],float);p=np.asarray(c['phases_rad'],float)
     if not len(f) or f.shape!=p.shape or not np.isfinite(f).all() or not np.isfinite(p).all() or np.any(f<=0):raise ValueError('Invalid pilot frequency or phase')
-    scalar=[c['duration_s'],c['ramp_s'],c['acceleration_component_m_s2']]
-    if not np.isfinite(scalar).all() or not 0<c['ramp_s']<c['duration_s']/2 or c['acceleration_component_m_s2']<0:raise ValueError('Invalid pilot duration, ramp or amplitude')
+    amplitude=np.asarray(c.get('acceleration_components_m_s2',c.get('acceleration_component_m_s2')),float)
+    if amplitude.ndim and amplitude.shape!=f.shape:raise ValueError('Invalid per-frequency amplitudes')
+    if not np.isfinite(amplitude).all() or np.any(amplitude<0) or not np.isfinite([c['duration_s'],c['ramp_s']]).all() or not 0<c['ramp_s']<c['duration_s']/2:raise ValueError('Invalid pilot duration, ramp or amplitude')
     actual=peaks(c)
     violations=[name for name,limit in LIMITS.items() if actual[name]['value']>limit*(1+1e-8)]
     return actual,violations

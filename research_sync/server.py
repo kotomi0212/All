@@ -200,7 +200,7 @@ async def run(args):
                     if trial or capture is not None or finishing or 'quest' not in peers.values():
                         await ws.send(json.dumps(dict(type='error',message='Questの接続と、前の試行の保存完了を確認してください')));continue
                     condition=msg.get('condition','multicosine')
-                    if condition not in ('study_sweep90','study_multicosine10','multicosine','none','dot','spinner','pilot_rest','pilot_five_x1p4',*[f'pilot_{kind}_x{n}' for kind in ('single','five') for n in (1,2,3)]):
+                    if condition not in ('study_sweep90','study_multicosine10','study_multicosine10_equal_velocity','multicosine','none','dot','spinner','pilot_rest','pilot_five_x1p4',*[f'pilot_{kind}_x{n}' for kind in ('single','five') for n in (1,2,3)]):
                         await ws.send(json.dumps(dict(type='error',message='Unknown visual condition')));continue
                     if state['height_pending']:
                         await ws.send(json.dumps(dict(type='error',message='目線高さの取得完了を待ってください')));continue

@@ -12,7 +12,7 @@ from .low_band import evaluate
 class StudyStimuliTests(unittest.TestCase):
     def test_new_profiles_and_enabled_catalogue(self):
         conditions=available_conditions()
-        self.assertEqual(list(conditions.values())[:2],list(LABELS.values()))
+        self.assertEqual(list(conditions.values())[:len(LABELS)],list(LABELS.values()))
         self.assertNotIn('pilot_five_x2',conditions.values())
         self.assertNotIn('pilot_five_x3',conditions.values())
         for condition in LABELS.values():
@@ -22,6 +22,28 @@ class StudyStimuliTests(unittest.TestCase):
             if condition.startswith('pilot_'):
                 c=json.loads((ROOT.parent/'pilot_profiles'/(condition+'.json')).read_text())
                 self.assertTrue(c['enabled'])
+
+    def test_equal_velocity_profile_and_blocked_conditions(self):
+        from .low_band import BASE_A, profile as pilot_profile
+        condition='study_multicosine10_equal_velocity'
+        c=profile(condition)
+        self.assertTrue(c['enabled'])
+        self.assertIn(condition,available_conditions().values())
+        self.assertTrue(select_stimulus({},condition)['enabled'])
+        self.assertEqual(len(c['frequencies_hz']),10)
+        np.testing.assert_allclose(np.array(c['acceleration_components_m_s2'])/(2*np.pi*np.array(c['frequencies_hz'])),c['velocity_component_m_s'])
+        self.assertAlmostEqual(c['maxima']['displacement_m']['value'],c['target_max_displacement_m'],places=7)
+        self.assertIn(condition,STIMULI)
+        for old in ('study_multicosine10_x4','study_five_x4'):
+            self.assertNotIn(old,available_conditions().values())
+            with self.assertRaises(ValueError):select_stimulus({},old)
+        times=np.linspace(0,100,101)
+        code="const fs=require('fs'),w=require('./research_sync/waveform.js'),q=JSON.parse(fs.readFileSync(0,'utf8'));console.log(JSON.stringify(q.t.map(t=>w.evaluate(t,q.c))));"
+        result=subprocess.run(['node','-e',code],input=json.dumps(dict(c=c,t=times.tolist())),text=True,capture_output=True,check=True,cwd=ROOT.parents[1])
+        js=np.array([[r[k] for k in ('x','v','a')] for r in json.loads(result.stdout)])
+        np.testing.assert_allclose(js,np.array(evaluate(times,c)).T,atol=1e-10)
+        for condition in ('pilot_five_x2','pilot_five_x3'):
+            with self.assertRaises(ValueError):pilot_profile(condition)
 
     def test_browser_sweep_matches_independent_design_samples(self):
         c=profile('study_sweep90')
