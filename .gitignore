@@ -2,3 +2,9 @@ node_modules/
 .venv/
 __pycache__/
 *.py[cod]
+
+# MATLAB generated caches and local analysis outputs
+slprj/
+*.slxc
+/2611/261121/*/*_system_id/
+/tmp/sonobe2025_p*.png
