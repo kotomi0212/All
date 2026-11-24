@@ -1,0 +1,42 @@
+﻿並進刺激0.2/0.5 Hzの同期不要ゲイン解析（2026-11-24）
+
+入力: 両条件ともユーザー提示の変位片振幅0.0246 m。正弦波、固定床上の視覚並進刺激を仮定。
+物理的な支持面移動ならモデルを変更する必要がある。
+対象: gridtrans02/05、seguchi00001/00002の4試行。条件周波数はユーザー確認済みのファイル名に従う。
+抽出済みAP頭部・関節モード加速度を使用。元CSVの記載先は現PCには存在せず、COM再構成用床反力は未入手。
+モード和が頭部加速度と一致することを全6000点で確認したが、COMと同一ではない。
+
+方法: 主区間5<=t<35秒（既存解析に合わせた区間であり、刺激ログで定常状態を確認したものではない）。
+定数、直線トレンド、刺激周波数のcos/sinを同時最小二乗し、片振幅sqrt(cos係数^2+sin係数^2)を抽出。
+mm/s²をm/s²に変換し、0.0246*(2*pi*f)^2で除算。位相は使用しない。
+harmonic_partial_R2は直線トレンドのみの残差に対する刺激周波数成分追加の説明率。SNRやコヒーレンスではない。
+別の5区間でも同じ解析を実施。区間比較は信頼区間ではない。
+
+参考モデル: 頭部加速度/視覚加速度 = -gamma/(1+Ts)。T>=0、gamma>=0、gammaは無次元。
+4試行の線形ゲイン二乗誤差を同じ重みで最小化。T=0およびT→∞の極限を明示的に比較。
+COM・姿勢制御器を含む既存モデルのgamma（秒）とは定義も単位も異なり、比較・代用不可。
+このモデルの0.5/0.2 Hzゲイン比は0.4〜1。2周波数平均の比がこの範囲外なら有限のT,gammaによる一致は不可能。
+4通りの試行組合せは対応づけを仮定しない感度解析。2点の完全一致はモデルの妥当性の証拠にはならない。
+繰り返し2試行のみで母集団の信頼区間は報告しない。
+一定の時計オフセットには振幅が不変だが、時計ドリフト、非定常性、刺激振幅の実際の実装誤差には影響される。
+
+主解析（頭部）の結果:
+                          trial  frequency_Hz  output_acceleration_peak_m_s2  gain_acceleration_ratio  harmonic_partial_R2
+261022_gridtrans02_seguchi00001           0.2                       0.001161                 0.029893             0.002436
+261022_gridtrans02_seguchi00002           0.2                       0.001723                 0.044364             0.005818
+261022_gridtrans05_seguchi00001           0.5                       0.004165                 0.017156             0.032720
+261022_gridtrans05_seguchi00002           0.5                       0.001619                 0.006670             0.004850
+
+output  start_s  end_s                                                         selection  gain_0p5_over_0p2          SSE           status      T_s  gamma_dimensionless  gamma_over_T_per_s
+  head        5     35                                                   all_four_trials           0.320856 1.745737e-04 T_infinite_limit      inf                  inf            0.045383
+  head        5     25                                                   all_four_trials           0.225594 2.494479e-04 T_infinite_limit      inf                  inf            0.051759
+  head       10     30                                                   all_four_trials           0.308013 5.018400e-05 T_infinite_limit      inf                  inf            0.042759
+  head       15     35                                                   all_four_trials           0.379967 8.458566e-05 T_infinite_limit      inf                  inf            0.045908
+  head       10     50                                                   all_four_trials           0.313640 1.423415e-04 T_infinite_limit      inf                  inf            0.037489
+  head        0     60                                                   all_four_trials           0.459577 1.596413e-04           finite 1.249251             0.040716                 NaN
+  head        5     35 261022_gridtrans02_seguchi00001 + 261022_gridtrans05_seguchi00001           0.573915 1.706382e-18           finite 0.633375             0.038205                 NaN
+  head        5     35 261022_gridtrans02_seguchi00001 + 261022_gridtrans05_seguchi00002           0.223127 2.409859e-05 T_infinite_limit      inf                  inf            0.035273
+  head        5     35 261022_gridtrans02_seguchi00002 + 261022_gridtrans05_seguchi00001           0.386707 2.998269e-07 T_infinite_limit      inf                  inf            0.055494
+  head        5     35 261022_gridtrans02_seguchi00002 + 261022_gridtrans05_seguchi00002           0.150344 1.057509e-04 T_infinite_limit      inf                  inf            0.050950
+
+結論: 頭部の参考解析のみ。従来のCOMモデルによるT,gammaの同定は床反力元CSVの入手待ち。
