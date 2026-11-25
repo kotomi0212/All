@@ -1,0 +1,4 @@
+{"kind":"capture_start","pc_command_s":85942.4127127,"pc_after_task_s":85942.5134219,"status":"Measure"}
+{"kind":"raw_block","block_index":0,"pc_before_read_s":85942.5140883,"pc_after_read_s":85942.5147936,"base64":"OZGTjtGM11vfpuWRmXT3eaaEqpopWmiNLQATAJfvFADh//3/0Pw4kZqO2IzXW+mm35GddPx5roSjmiRabI0yAAgAm+8VAOT/+//Q/AIBTfBc/fX/yP8HAKAA/wBO8Ez98v/I/wYAqAA=","device_sample_time_known":false}
+{"kind":"raw_block","block_index":1,"pc_before_read_s":85942.5153622,"pc_after_read_s":85942.5153666,"base64":"QJGejuCM1Vv3puyRm3T+eauEqJokWnONMAAPAI7vEwDj//3/0Pw6kaCO1YzXW+2m6pGcdPV5rYSqmiJaaY0wAA4Aje8TAOb//f/I/OwAUvBQ/fD/yv8JAKAA5wBD8E/97//M/woAmAA=","device_sample_time_known":false}
+{"kind":"capture_stop","pc_s":85942.6388226,"blocks":2,"packet_lost_bytes":0,"packet_errors":0}

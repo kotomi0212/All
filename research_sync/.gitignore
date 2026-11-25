@@ -4,7 +4,14 @@ reference/
 *.key
 sessions/
 bin/
-recordings/
+# Recordings are shared through GitHub by explicit user choice (2026-11-25).
+# Local control credentials and transient acquisition files remain private.
+recordings/**/*.control-token
+recordings/**/.control-token
+recordings/**/*.request
+recordings/**/*.log
+recordings/**/*.pfx
+recordings/**/*.p12
 results/vendor_inspection*/
 # Recorded measurements and private investigation notes stay on this PC.
 README-ja.md

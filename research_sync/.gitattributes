@@ -1,0 +1,2 @@
+# Preserve original measurement bytes across Windows/macOS/Linux checkouts.
+recordings/** -text

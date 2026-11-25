@@ -1,0 +1,701 @@
+{
+  "trial_id": "86b7f90b-da21-4dff-80ed-8a3824feec7b",
+  "termination": "quest-disconnect",
+  "quest_frames": 755,
+  "quest_clock": {
+    "quest_origin_s": 44.42289854651224,
+    "pc_origin_s": 89361.58520532762,
+    "slope": 0.9999607058706587,
+    "drift_ppm": -39.29412934133847,
+    "probe_span_s": 86.24890000000036,
+    "probes": 348,
+    "selected": 172,
+    "rtt_min_s": 0.0020105999864199475,
+    "rtt_median_s": 0.004037749998561546,
+    "rtt_p95_s": 0.006451149999104899,
+    "residual_rms_s": 0.006977501189482487,
+    "selected_residual_rms_s": 0.00022746376638848977,
+    "selected_residual_p95_abs_s": 0.0004750171239720655,
+    "uncertainty_note": "RTT/2 is an asymmetry allowance, not measured absolute accuracy. Optical and sensor latency excluded.",
+    "asymmetry_allowance_max_s": 0.13093000000161936,
+    "extrapolation_warning": "Do not extrapolate outside probe range without additional validation",
+    "quest_range_s": [
+      0.5483000000007451,
+      87.29825000000187
+    ]
+  },
+  "pc_time_basis": "Windows QPC / Python perf_counter seconds",
+  "scene": {
+    "roomHeightM": 3,
+    "roomSizeM": 6,
+    "frontWallDistanceM": 3,
+    "gridSpacingM": 0.5
+  },
+  "processing": "Acquisition CSV export only; no filters, COM or FRF",
+  "events_file": "C:\\Users\\atvma\\gitseguchi\\All\\research_sync\\recordings\\session-20261124-154428-98d659\\events.jsonl",
+  "combalance_samples": 1846,
+  "timing_validation": "Quest clock mapped to PC. Force samples retain PC receipt times; acquisition latency not independently calibrated.",
+  "pc_commands": [
+    {
+      "kind": "command_start",
+      "pc_monotonic_s": 89386.1038645,
+      "pc_epoch_s": 1795504707.974217,
+      "trial_id": "86b7f90b-da21-4dff-80ed-8a3824feec7b",
+      "scheduled_pc_s": 89396.1038586,
+      "initiator": "operator",
+      "start_delay_s": 10.0,
+      "stimulus": {
+        "schema": 4,
+        "waveform": "pilot_acceleration_multicosine",
+        "condition": "pilot_five_x1p4",
+        "duration_s": 100,
+        "ramp_s": 10,
+        "analysis_interval_s": [
+          10,
+          90
+        ],
+        "frequencies_hz": [
+          0.05,
+          0.1,
+          0.2,
+          0.4,
+          0.7
+        ],
+        "phases_rad": [
+          1.5706882248641094,
+          1.5705934203251946,
+          4.711980930457215,
+          7.853127077771178,
+          10.994106256656341
+        ],
+        "acceleration_component_m_s2": 0.02333050925128455,
+        "amplitude_multiple": 1.4,
+        "reference_component_m_s2": 0.01666464946520325,
+        "fixation": null,
+        "engineering_limits": {
+          "displacement_m": 0.3,
+          "velocity_m_s": 0.1,
+          "acceleration_m_s2": 0.2
+        },
+        "normalization": "None: exact requested per-component acceleration",
+        "sign_convention": "AP positive is world -Z; translate whole room, never camera",
+        "caution": "Engineering limits are not validated human safety limits; no sensor or photon delay calibration",
+        "maxima": {
+          "displacement_m": {
+            "value": 0.2758818941646964,
+            "time_s": 56.2937264536907
+          },
+          "velocity_m_s": {
+            "value": 0.09963136823599761,
+            "time_s": 20.494219025910777
+          },
+          "acceleration_m_s2": {
+            "value": 0.07793427254900223,
+            "time_s": 43.767384482011934
+          }
+        },
+        "limit_violations": [],
+        "enabled": true,
+        "eye_height_m": 0.9884630751408126,
+        "eye_height_q_s": 58.96240000000223,
+        "scene": {
+          "roomHeightM": 3,
+          "roomSizeM": 6,
+          "frontWallDistanceM": 3,
+          "gridSpacingM": 0.5
+        }
+      },
+      "participant": {
+        "subject": "test",
+        "height_cm": 90.0,
+        "trial_number": 1
+      }
+    }
+  ],
+  "stimulus": {
+    "schema": 4,
+    "waveform": "pilot_acceleration_multicosine",
+    "condition": "pilot_five_x1p4",
+    "duration_s": 100,
+    "ramp_s": 10,
+    "analysis_interval_s": [
+      10,
+      90
+    ],
+    "frequencies_hz": [
+      0.05,
+      0.1,
+      0.2,
+      0.4,
+      0.7
+    ],
+    "phases_rad": [
+      1.5706882248641094,
+      1.5705934203251946,
+      4.711980930457215,
+      7.853127077771178,
+      10.994106256656341
+    ],
+    "acceleration_component_m_s2": 0.02333050925128455,
+    "amplitude_multiple": 1.4,
+    "reference_component_m_s2": 0.01666464946520325,
+    "fixation": null,
+    "engineering_limits": {
+      "displacement_m": 0.3,
+      "velocity_m_s": 0.1,
+      "acceleration_m_s2": 0.2
+    },
+    "normalization": "None: exact requested per-component acceleration",
+    "sign_convention": "AP positive is world -Z; translate whole room, never camera",
+    "caution": "Engineering limits are not validated human safety limits; no sensor or photon delay calibration",
+    "maxima": {
+      "displacement_m": {
+        "value": 0.2758818941646964,
+        "time_s": 56.2937264536907
+      },
+      "velocity_m_s": {
+        "value": 0.09963136823599761,
+        "time_s": 20.494219025910777
+      },
+      "acceleration_m_s2": {
+        "value": 0.07793427254900223,
+        "time_s": 43.767384482011934
+      }
+    },
+    "limit_violations": [],
+    "enabled": true,
+    "eye_height_m": 0.9884630751408126,
+    "eye_height_q_s": 58.96240000000223,
+    "scene": {
+      "roomHeightM": 3,
+      "roomSizeM": 6,
+      "frontWallDistanceM": 3,
+      "gridSpacingM": 0.5
+    }
+  },
+  "participant": {
+    "subject": "test",
+    "height_cm": 90.0,
+    "trial_number": 1
+  },
+  "raw_directory": "C:\\Users\\atvma\\gitseguchi\\All\\research_sync\\recordings\\session-20261124-154428-98d659\\trials\\86b7f90b-da21-4dff-80ed-8a3824feec7b\\combalance_raw",
+  "device_parameters": {
+    "Status": "Idle",
+    "Ready": false,
+    "Serial": "MFP-0006",
+    "Version": "Ver.1.1.0",
+    "Frequency": 100,
+    "Matome": 2,
+    "Prf": {
+      "shape": [
+        12
+      ],
+      "values": [
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181
+      ]
+    },
+    "Npu": {
+      "shape": [
+        12
+      ],
+      "values": [
+        0.455,
+        0.455,
+        0.307,
+        0.455,
+        0.455,
+        0.307,
+        0.455,
+        0.455,
+        0.307,
+        0.455,
+        0.455,
+        0.307
+      ]
+    },
+    "ForceZero": {
+      "shape": [
+        12
+      ],
+      "values": [
+        32856,
+        32673,
+        32834,
+        32799,
+        32792,
+        32657,
+        32662,
+        32736,
+        32669,
+        32885,
+        32890,
+        32813
+      ]
+    },
+    "Itf6x12": {
+      "shape": [
+        72
+      ],
+      "values": [
+        0.434367,
+        -0.196652,
+        0.040276,
+        0.400519,
+        0.069133,
+        -0.020584,
+        0.37562,
+        -0.001852,
+        0.049374,
+        0.339761,
+        -0.148077,
+        -0.073581,
+        -0.016005,
+        0.61695,
+        -0.106825,
+        0.085913,
+        0.479629,
+        0.039377,
+        0.184791,
+        0.487671,
+        0.046994,
+        0.08698,
+        0.627914,
+        0.03532,
+        -0.070802,
+        0.048385,
+        0.950318,
+        -0.028983,
+        -0.046322,
+        0.993393,
+        -0.048327,
+        0.02102,
+        1.05749,
+        -0.005106,
+        0.047116,
+        0.986901,
+        -0.004239,
+        -0.013808,
+        0.133575,
+        -0.001788,
+        -0.009996,
+        0.129671,
+        0.000226,
+        -0.012808,
+        -0.142486,
+        -0.004434,
+        -0.013904,
+        -0.131866,
+        0.042634,
+        -0.01511,
+        -0.127245,
+        0.034796,
+        -0.001284,
+        0.129884,
+        0.03232,
+        -0.002813,
+        0.146072,
+        0.033359,
+        -0.010444,
+        -0.137413,
+        -0.087004,
+        0.108893,
+        -0.021986,
+        -0.090166,
+        -0.076976,
+        0.002147,
+        0.043974,
+        -0.116529,
+        -0.01709,
+        0.079819,
+        0.085504,
+        0.000939
+      ]
+    },
+    "AccelRange": "G8",
+    "AccelBW": "H1000",
+    "GyroRange": "D2000",
+    "GyroBW": "H1000",
+    "AccelPrf": {
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "values": [
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281,
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281,
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281,
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281,
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281,
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281
+      ]
+    },
+    "AccelZero": {
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "AccelItf": {
+      "shape": [
+        2,
+        4,
+        9
+      ],
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "GyroPrf": {
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "values": [
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756,
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756,
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756,
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756,
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756,
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756
+      ]
+    },
+    "GyroZero": {
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "GyroItf": {
+      "shape": [
+        2,
+        4,
+        9
+      ],
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "FpAz0": -0.0123,
+    "FpA": 0.14,
+    "FpB": 0.14,
+    "FullScale": {
+      "shape": [
+        6
+      ],
+      "values": [
+        50,
+        50,
+        1000,
+        300,
+        300,
+        15
+      ]
+    },
+    "PacketLostByteCount": 0,
+    "PacketErrorCount": 0,
+    "pc_monotonic_s": 89385.9534002,
+    "qpc_frequency": 10000000,
+    "original_batch_samples": 10,
+    "timer_resolution_1ms_request_succeeded": true,
+    "timing_note": "Host dequeue/read timestamps only; device acquisition timestamps not yet established"
+  },
+  "raw_sha256": "f4b8422f961dde80e32a7502a235d693fe4c4d29ca40a69aae722c90c3e0d936",
+  "batch_samples": 2,
+  "sampling_hz": 100.0,
+  "force_sample_clock_estimate": {
+    "method": "lower-envelope affine fit of block receipt times; provisional",
+    "slope": 1.0000226065452142,
+    "intercept_pc_s": 89386.0542570298,
+    "absolute_acquisition_latency_s": null,
+    "independently_validated": false
+  },
+  "capture_end": {
+    "kind": "capture_stop",
+    "pc_s": 89404.6341607,
+    "blocks": 923,
+    "packet_lost_bytes": 0,
+    "packet_errors": 0
+  },
+  "force_coordinates": "Native manufacturer sensor axes, before AP remapping. Device coefficients applied; no software filter.",
+  "external_imu_quality": {
+    "status": "raw_signal_present_unvalidated",
+    "samples": 1846,
+    "nonzero_samples": 1846,
+    "channel_min": [
+      -1096,
+      -114,
+      -3928,
+      -29,
+      -130,
+      1,
+      408
+    ],
+    "channel_max": [
+      -977,
+      41,
+      -3829,
+      10,
+      13,
+      23,
+      536
+    ],
+    "warning": null,
+    "calibration": "Raw counts only. Channel identities, physical units, orientation and gravity correction are not validated."
+  },
+  "weight_estimate": {
+    "body_mass_kg": null,
+    "status": "force_out_of_range",
+    "method": "abs(median(prestimulus sensor_Fz_N))/9.80665; provisional, includes worn equipment",
+    "sample_count": 200,
+    "interval_pc_s": [
+      89394.10443901249,
+      89396.0944839995
+    ],
+    "relative_rms": 0.2035066950441545
+  }
+}

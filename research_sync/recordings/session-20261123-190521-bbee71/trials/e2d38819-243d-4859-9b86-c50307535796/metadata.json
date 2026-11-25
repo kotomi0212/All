@@ -1,0 +1,685 @@
+{
+  "trial_id": "e2d38819-243d-4859-9b86-c50307535796",
+  "termination": "complete",
+  "quest_frames": 5399,
+  "quest_clock": {
+    "quest_origin_s": 251.65528386627946,
+    "pc_origin_s": 13349.655604092442,
+    "slope": 0.9999627232206206,
+    "drift_ppm": -37.27677937936935,
+    "probe_span_s": 171.0003499999996,
+    "probes": 691,
+    "selected": 344,
+    "rtt_min_s": 0.0015777999997794723,
+    "rtt_median_s": 0.0033950000008644565,
+    "rtt_p95_s": 0.004871700000620649,
+    "residual_rms_s": 0.0002626688423852591,
+    "selected_residual_rms_s": 0.00016678797558004869,
+    "selected_residual_p95_abs_s": 0.000342908853872359,
+    "uncertainty_note": "RTT/2 is an asymmetry allowance, not measured absolute accuracy. Optical and sensor latency excluded.",
+    "asymmetry_allowance_max_s": 0.004620399999637925,
+    "extrapolation_warning": "Do not extrapolate outside probe range without additional validation",
+    "quest_range_s": [
+      165.35685000000055,
+      337.8575000000009
+    ]
+  },
+  "pc_time_basis": "Windows QPC / Python perf_counter seconds",
+  "scene": {
+    "roomHeightM": 3,
+    "roomSizeM": 6,
+    "frontWallDistanceM": 3,
+    "gridSpacingM": 0.5
+  },
+  "processing": "Acquisition CSV export only; no filters, COM or FRF",
+  "events_file": "C:\\Users\\atvma\\gitseguchi\\All\\research_sync\\recordings\\session-20261123-190521-bbee71\\events.jsonl",
+  "combalance_samples": 7006,
+  "timing_validation": "Quest clock mapped to PC. Force samples retain PC receipt times; acquisition latency not independently calibrated.",
+  "pc_commands": [
+    {
+      "kind": "command_start",
+      "pc_monotonic_s": 13365.9735297,
+      "pc_epoch_s": 1795428687.6544383,
+      "trial_id": "e2d38819-243d-4859-9b86-c50307535796",
+      "scheduled_pc_s": 13375.9735169,
+      "initiator": "operator",
+      "start_delay_s": 10.0,
+      "stimulus": {
+        "schema": 4,
+        "waveform": "pilot_acceleration_multicosine",
+        "condition": "pilot_rest",
+        "duration_s": 60,
+        "ramp_s": 5,
+        "analysis_interval_s": [
+          0,
+          60
+        ],
+        "frequencies_hz": [
+          0.2
+        ],
+        "phases_rad": [
+          0.0
+        ],
+        "acceleration_component_m_s2": 0.0,
+        "amplitude_multiple": 0,
+        "reference_component_m_s2": 0.01666464946520325,
+        "fixation": null,
+        "engineering_limits": {
+          "displacement_m": 0.3,
+          "velocity_m_s": 0.1,
+          "acceleration_m_s2": 0.2
+        },
+        "normalization": "None: exact requested per-component acceleration",
+        "sign_convention": "AP positive is world -Z; translate whole room, never camera",
+        "caution": "Engineering limits are not validated human safety limits; no sensor or photon delay calibration",
+        "maxima": {
+          "displacement_m": {
+            "value": 0.0,
+            "time_s": 0.0
+          },
+          "velocity_m_s": {
+            "value": 0.0,
+            "time_s": 0.0
+          },
+          "acceleration_m_s2": {
+            "value": 0.0,
+            "time_s": 0.0
+          }
+        },
+        "limit_violations": [],
+        "enabled": true,
+        "eye_height_m": 1.0156752158473314,
+        "eye_height_q_s": 255.0305,
+        "scene": {
+          "roomHeightM": 3,
+          "roomSizeM": 6,
+          "frontWallDistanceM": 3,
+          "gridSpacingM": 0.5
+        }
+      },
+      "participant": {
+        "subject": "seguchi_test",
+        "height_cm": 148.0,
+        "trial_number": 1
+      }
+    }
+  ],
+  "stimulus": {
+    "schema": 4,
+    "waveform": "pilot_acceleration_multicosine",
+    "condition": "pilot_rest",
+    "duration_s": 60,
+    "ramp_s": 5,
+    "analysis_interval_s": [
+      0,
+      60
+    ],
+    "frequencies_hz": [
+      0.2
+    ],
+    "phases_rad": [
+      0.0
+    ],
+    "acceleration_component_m_s2": 0.0,
+    "amplitude_multiple": 0,
+    "reference_component_m_s2": 0.01666464946520325,
+    "fixation": null,
+    "engineering_limits": {
+      "displacement_m": 0.3,
+      "velocity_m_s": 0.1,
+      "acceleration_m_s2": 0.2
+    },
+    "normalization": "None: exact requested per-component acceleration",
+    "sign_convention": "AP positive is world -Z; translate whole room, never camera",
+    "caution": "Engineering limits are not validated human safety limits; no sensor or photon delay calibration",
+    "maxima": {
+      "displacement_m": {
+        "value": 0.0,
+        "time_s": 0.0
+      },
+      "velocity_m_s": {
+        "value": 0.0,
+        "time_s": 0.0
+      },
+      "acceleration_m_s2": {
+        "value": 0.0,
+        "time_s": 0.0
+      }
+    },
+    "limit_violations": [],
+    "enabled": true,
+    "eye_height_m": 1.0156752158473314,
+    "eye_height_q_s": 255.0305,
+    "scene": {
+      "roomHeightM": 3,
+      "roomSizeM": 6,
+      "frontWallDistanceM": 3,
+      "gridSpacingM": 0.5
+    }
+  },
+  "participant": {
+    "subject": "seguchi_test",
+    "height_cm": 148.0,
+    "trial_number": 1
+  },
+  "raw_directory": "C:\\Users\\atvma\\gitseguchi\\All\\research_sync\\recordings\\session-20261123-190521-bbee71\\trials\\e2d38819-243d-4859-9b86-c50307535796\\combalance_raw",
+  "device_parameters": {
+    "Status": "Idle",
+    "Ready": false,
+    "Serial": "MFP-0006",
+    "Version": "Ver.1.1.0",
+    "Frequency": 100,
+    "Matome": 2,
+    "Prf": {
+      "shape": [
+        12
+      ],
+      "values": [
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181
+      ]
+    },
+    "Npu": {
+      "shape": [
+        12
+      ],
+      "values": [
+        0.455,
+        0.455,
+        0.307,
+        0.455,
+        0.455,
+        0.307,
+        0.455,
+        0.455,
+        0.307,
+        0.455,
+        0.455,
+        0.307
+      ]
+    },
+    "ForceZero": {
+      "shape": [
+        12
+      ],
+      "values": [
+        32856,
+        32673,
+        32834,
+        32799,
+        32792,
+        32657,
+        32662,
+        32736,
+        32669,
+        32885,
+        32890,
+        32813
+      ]
+    },
+    "Itf6x12": {
+      "shape": [
+        72
+      ],
+      "values": [
+        0.434367,
+        -0.196652,
+        0.040276,
+        0.400519,
+        0.069133,
+        -0.020584,
+        0.37562,
+        -0.001852,
+        0.049374,
+        0.339761,
+        -0.148077,
+        -0.073581,
+        -0.016005,
+        0.61695,
+        -0.106825,
+        0.085913,
+        0.479629,
+        0.039377,
+        0.184791,
+        0.487671,
+        0.046994,
+        0.08698,
+        0.627914,
+        0.03532,
+        -0.070802,
+        0.048385,
+        0.950318,
+        -0.028983,
+        -0.046322,
+        0.993393,
+        -0.048327,
+        0.02102,
+        1.05749,
+        -0.005106,
+        0.047116,
+        0.986901,
+        -0.004239,
+        -0.013808,
+        0.133575,
+        -0.001788,
+        -0.009996,
+        0.129671,
+        0.000226,
+        -0.012808,
+        -0.142486,
+        -0.004434,
+        -0.013904,
+        -0.131866,
+        0.042634,
+        -0.01511,
+        -0.127245,
+        0.034796,
+        -0.001284,
+        0.129884,
+        0.03232,
+        -0.002813,
+        0.146072,
+        0.033359,
+        -0.010444,
+        -0.137413,
+        -0.087004,
+        0.108893,
+        -0.021986,
+        -0.090166,
+        -0.076976,
+        0.002147,
+        0.043974,
+        -0.116529,
+        -0.01709,
+        0.079819,
+        0.085504,
+        0.000939
+      ]
+    },
+    "AccelRange": "G8",
+    "AccelBW": "H1000",
+    "GyroRange": "D2000",
+    "GyroBW": "H1000",
+    "AccelPrf": {
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "values": [
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281,
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281,
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281,
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281,
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281,
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281
+      ]
+    },
+    "AccelZero": {
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "AccelItf": {
+      "shape": [
+        2,
+        4,
+        9
+      ],
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "GyroPrf": {
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "values": [
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756,
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756,
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756,
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756,
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756,
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756
+      ]
+    },
+    "GyroZero": {
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "GyroItf": {
+      "shape": [
+        2,
+        4,
+        9
+      ],
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "FpAz0": -0.0123,
+    "FpA": 0.14,
+    "FpB": 0.14,
+    "FullScale": {
+      "shape": [
+        6
+      ],
+      "values": [
+        50,
+        50,
+        1000,
+        300,
+        300,
+        15
+      ]
+    },
+    "PacketLostByteCount": 0,
+    "PacketErrorCount": 0,
+    "pc_monotonic_s": 13365.8160116,
+    "qpc_frequency": 10000000,
+    "original_batch_samples": 10,
+    "timer_resolution_1ms_request_succeeded": true,
+    "timing_note": "Host dequeue/read timestamps only; device acquisition timestamps not yet established"
+  },
+  "raw_sha256": "b89afcd1c04839d5fd37cdc97db0bfff2f1ba4ff02a5b24f3cbfa6bbba239b44",
+  "batch_samples": 2,
+  "sampling_hz": 100.0,
+  "force_sample_clock_estimate": {
+    "method": "lower-envelope affine fit of block receipt times; provisional",
+    "slope": 1.0000077999366,
+    "intercept_pc_s": 13365.909916361474,
+    "absolute_acquisition_latency_s": null,
+    "independently_validated": false
+  },
+  "capture_end": {
+    "kind": "capture_stop",
+    "pc_s": 13436.1018489,
+    "blocks": 3503,
+    "packet_lost_bytes": 0,
+    "packet_errors": 0
+  },
+  "force_coordinates": "Native manufacturer sensor axes, before AP remapping. Device coefficients applied; no software filter.",
+  "external_imu_quality": {
+    "status": "raw_signal_present_unvalidated",
+    "samples": 7006,
+    "nonzero_samples": 7006,
+    "channel_min": [
+      -12123,
+      -5699,
+      -7516,
+      -7870,
+      -5833,
+      -9523,
+      -56
+    ],
+    "channel_max": [
+      4418,
+      5451,
+      9770,
+      9747,
+      8035,
+      11236,
+      112
+    ],
+    "warning": null,
+    "calibration": "Raw counts only. Channel identities, physical units, orientation and gravity correction are not validated."
+  },
+  "weight_estimate": {
+    "body_mass_kg": null,
+    "status": "force_out_of_range",
+    "method": "abs(median(prestimulus sensor_Fz_N))/9.80665; provisional, includes worn equipment",
+    "sample_count": 200,
+    "interval_pc_s": [
+      13373.979979306961,
+      13375.969994828836
+    ],
+    "relative_rms": 0.6997152192761298
+  }
+}

@@ -1,0 +1,3 @@
+{"kind":"capture_start","pc_command_s":13265.1480287,"pc_after_task_s":13265.2490794,"status":"Measure"}
+{"kind":"raw_block","block_index":0,"pc_before_read_s":13265.2516429,"pc_after_read_s":13265.2528185,"base64":"WYCcfzuAE4ANgI1/i3/Vf5d/aoBtgCqANQAYAI7vEwDj//3/MP1cgKR/QYAWgBeAj3+Of9l/m39rgHOAKoA7AA0Al+8RAOT//f8o/QIAyv9O8Pb/1f8LALj/CQDZ/0rw9P/Q/wsAyP8=","device_sample_time_known":false}
+{"kind":"capture_stop","pc_s":13265.3784921,"blocks":1,"packet_lost_bytes":0,"packet_errors":0}
