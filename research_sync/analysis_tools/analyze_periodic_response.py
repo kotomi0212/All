@@ -51,7 +51,12 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root',type=Path,default=Path(__file__).resolve().parents[2])
     parser.add_argument('--output',required=True,type=Path)
+    parser.add_argument('--trials',nargs='+',type=Path,help='Explicit named recording directories; ten-tone conditions analyzed separately')
+    parser.add_argument('--label',help='Anonymous plot label for a single explicitly selected trial')
     args=parser.parse_args();root=args.root.resolve();out=args.output.resolve();out.mkdir(parents=True,exist_ok=False)
+    requested_ids=set()
+    for folder in args.trials or []:
+        requested_ids.add(json.loads((folder/(folder.name+'_metadata.json')).read_text(encoding='utf-8-sig'))['trial_id'])
     # Both historical datasets and acquisition copies are inventoried; duplicate trial IDs are never pooled.
     paths=list((root/'research_sync/recordings').rglob('*metadata.json'))+list((root/'2611').rglob('*metadata.json'))
     records=[]
@@ -62,17 +67,21 @@ def main():
             if not m.get('trial_id'):continue
             records.append((p,m,stim))
         except (ValueError,OSError):continue
-    main_records=[r for r in records if '/saved/' in r[0].as_posix() and r[2].get('condition')==TARGET]
+    main_records=[r for r in records if '/saved/' in r[0].as_posix() and (r[1]['trial_id'] in requested_ids if requested_ids else r[2].get('condition')==TARGET)]
     main_records.sort(key=lambda r:r[1].get('pc_commands',[{}])[0].get('pc_epoch_s',0))
     subjects=list(dict.fromkeys(r[1]['participant']['subject'] for r in main_records))
     aliases={s:'Participant '+chr(65+i) for i,s in enumerate(subjects)}
+    if args.label:
+        if len(requested_ids)!=1:raise ValueError('--label requires one explicit trial')
+        aliases={s:args.label for s in subjects}
     inventory=[];used=set();selected=[]
     # Prefer named saved files over raw acquisition copies.
     records.sort(key=lambda r:('/saved/' not in r[0].as_posix(),str(r[0])))
     for p,m,stim in records:
         tid=m['trial_id'];cond=stim.get('condition','unknown');sub=(m.get('participant') or {}).get('subject','unknown')
         duplicate=tid in used;used.add(tid)
-        target=cond==TARGET and not duplicate and m.get('termination')=='complete'
+        matches=tid in requested_ids if requested_ids else cond==TARGET
+        target=matches and not duplicate and m.get('termination')=='complete'
         status='candidate' if target else 'excluded'
         reason='' if target else ('duplicate trial_id (acquisition copy)' if duplicate else ('incomplete target trial; no full steady interval' if cond==TARGET else 'different condition; not pooled'))
         inventory.append(dict(metadata=str(p.relative_to(root)),trial_id=tid,participant=aliases.get(sub,'other'),condition=cond,termination=m.get('termination'),status=status,reason=reason,analysis_start_s='',analysis_end_s='',cycles=0))
@@ -101,6 +110,9 @@ def main():
         if not mass or mass<=0:raise ValueError('Missing mass')
         outputs={'COM_acceleration_Fy_over_M':(b['sensor_Fy_N']/mass,'m/s^2','AP Fy sign provisional; mass static Fz estimate'),
                  'Head_Z_raw':(b['external_imu_count_2'],'counts','sensor Z, user AP; not lab acceleration; no gravity correction')}
+        if not np.isfinite(b['external_imu_count_2']).all() or np.ptp(b['external_imu_count_2'])==0:
+            outputs.pop('Head_Z_raw')
+            for hz in f:results.append(dict(participant=alias,trial_id=tid,output='Head_Z_raw',frequency_hz=hz,status='unavailable',reason='IMU Z all zero, constant or nonfinite; not a measured head response',gain='',phase_deg='',coherence='',snr_db='',cycles=cycles))
         # Previously plotted male/female curves used unassigned population coefficients.
         # Do not reconstruct subject COM position without confirmed body parameters.
         for hz in f:
@@ -136,10 +148,11 @@ def main():
             # +AP is forward (-world Z): world.position.z = base - logged x, so logged velocity is BACKGROUND +AP.
             u=harmonic(qe[qm],q['ap_velocity_m_s'][qm],f);U.append(u)
             X=harmonic(qe[qm],q['ap_displacement_m'][qm],f);A=harmonic(qe[qm],q['ap_acceleration_m_s2'][qm],f)
-            for j,hz in enumerate(f):inputs.append(dict(participant=alias,cycle=cycle+1,frequency_hz=hz,input_velocity_amplitude=abs(u[j]),configured_velocity_amplitude=c.get('velocity_component_m_s'),relative_error_vs_config=abs(abs(u[j])/c['velocity_component_m_s']-1),velocity_vs_jomegaX_relative_error=abs(u[j]-2j*np.pi*hz*X[j])/abs(u[j]),acceleration_vs_jomegaV_relative_error=abs(A[j]-2j*np.pi*hz*u[j])/abs(A[j]),quest_samples=int(qm.sum()),force_samples=int(bm.sum())))
+            expected=np.full(len(f),c['velocity_component_m_s']) if c.get('velocity_component_m_s') else np.asarray(c.get('acceleration_components_m_s2',np.full(len(f),c.get('acceleration_component_m_s2'))))/(2*np.pi*f)
+            for j,hz in enumerate(f):inputs.append(dict(participant=alias,cycle=cycle+1,frequency_hz=hz,input_velocity_amplitude=abs(u[j]),configured_velocity_amplitude=expected[j],relative_error_vs_config=abs(abs(u[j])/expected[j]-1),velocity_vs_jomegaX_relative_error=abs(u[j]-2j*np.pi*hz*X[j])/abs(u[j]),acceleration_vs_jomegaV_relative_error=abs(A[j]-2j*np.pi*hz*u[j])/abs(A[j]),quest_samples=int(qm.sum()),force_samples=int(bm.sum())))
             for k,(y,unit,note) in outputs.items():Ys[k].append(harmonic(elapsed[bm],y[bm],f))
         U=np.array(U)
-        fig,axes=plt.subplots(4,len(outputs),figsize=(12,12),sharex=True)
+        fig,axes=plt.subplots(4,len(outputs),figsize=(12,12),sharex=True,squeeze=False)
         fig.subplots_adjust(left=.11,right=.98,bottom=.09,top=.92,hspace=.16,wspace=.30)
         subject_stats=[]
         for col,(name,(y,unit,note)) in enumerate(outputs.items()):
@@ -167,7 +180,7 @@ def main():
         clock=m.get('quest_clock') or {}
         sync.append(dict(participant=alias,trial_id=tid,quest_frames=len(qe),force_samples=len(ft),quest_median_dt_s=float(np.median(np.diff(qt))),quest_max_gap_s=float(np.max(np.diff(qt))),force_median_dt_s=float(np.median(np.diff(ft))),force_max_gap_s=float(np.max(np.diff(ft))),clock_drift_ppm=clock.get('drift_ppm'),clock_selected_residual_rms_s=clock.get('selected_residual_rms_s'),mass_kg=mass,mass_method=m['weight_estimate']['method'],height_m=height,alignment='stored Quest PC mapping + estimated force sample times; no shift',physical_latency='uncalibrated'))
         for pth in [mp,qp,fp]:provenance.append(dict(participant=alias,file=str(pth.relative_to(root)),sha256=hashlib.sha256(pth.read_bytes()).hexdigest()))
-        subject_summary.append(dict(participant=alias,frequency_hz=f.tolist(),period_s=T,cycles=cycles,outputs=subject_stats))
+        subject_summary.append(dict(participant=alias,trial_id=tid,condition=c.get('condition'),frequency_hz=f.tolist(),period_s=T,cycles=cycles,outputs=subject_stats))
       except Exception as exc:
         inv.update(status='excluded',reason=str(exc));failures.append(dict(metadata=str(mp),error=str(exc)))
     ax_input[-1,0].set_xlabel('Stimulus elapsed time (s)');fig_input.savefig(out/'stimulus_and_intervals.png',dpi=150);plt.close(fig_input)
