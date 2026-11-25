@@ -5,13 +5,36 @@ from pathlib import Path
 import numpy as np
 
 ROOT=Path(__file__).resolve().parent/'study_profiles'
+LOW_BAND_EQUAL_VELOCITY = 'study_multicosine5_equal_velocity_low_band'
 LABELS={
     '90秒 スイープ 0.70→0.05 Hz（中心固定）':'study_sweep90',
     '100秒 マルチコサイン10周波数（20秒×4周期）':'study_multicosine10',
     '10周波数 100秒・速度成分一定【最大加速度2.09 m/s²】':'study_multicosine10_equal_velocity',
+    '5周波数 100秒・各速度3.7 cm/s（0.05–0.45 Hz）':LOW_BAND_EQUAL_VELOCITY,
 }
 
 def profile(condition):
+    if condition == LOW_BAND_EQUAL_VELOCITY:
+        from .low_band import LIMITS, check_limits
+
+        c = json.loads((ROOT/'study_multicosine10.json').read_text(encoding='utf-8'))
+        c.pop('acceleration_component_m_s2')
+        c['frequencies_hz'] = c['frequencies_hz'][:5]
+        # Phases optimized for displacement peak under the velocity and
+        # acceleration limits over the entire ramped waveform.
+        c['phases_rad'] = [2.426723948, 1.610004920, 2.544845225,
+                           -0.389663110, 2.941852954]
+        omega = 2 * np.pi * np.asarray(c['frequencies_hz'])
+        speed = .037
+        c.update(condition=condition, velocity_component_m_s=speed,
+                 acceleration_components_m_s2=(speed * omega).tolist(),
+                 normalization='0.037 m/s per component; phases optimized to reduce peak displacement',
+                 note='Five components in the 10–90 s core; onset/offset ramps add sidebands.',
+                 engineering_limits=LIMITS)
+        c['maxima'], violations = check_limits(c)
+        if violations:
+            raise ValueError('Stimulus exceeds configured bounds: ' + ', '.join(violations))
+        return c
     if condition=='study_multicosine10_equal_velocity':
         from .low_band import BASE_A, LIMITS, check_limits
         c=json.loads((ROOT/'study_multicosine10.json').read_text(encoding='utf-8'))
