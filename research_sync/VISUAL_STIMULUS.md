@@ -46,3 +46,8 @@ python -m research_sync.visual_stimulus research_sync/results/visual-stimulus-ne
 `python -m unittest research_sync.test_visual_stimulus -v` の4テストと `node research_sync/test_quest.js` が通過しています。解析解の微分、端点、振幅、速度極値、Pythonとブラウザーの一致、条件変更を確認しています。旧波形を使う既存回帰テストの参照先のみ、保存した `previous_active_stimulus.json` へ固定しました。
 
 ComBalance取得・同期・床反力・FRF・パラメータ推定の実装は変更していません。関連する既存10ファイルのSHA-256が作業前後で一致しています。
+
+## 電車の車窓（2026-11-24）
+PC計測ソフト・ブラウザー操作画面の「情景」で格子室／電車を選択します。次の試行予約時に反映されます。更新後は計測ソフトを再起動し、Questページを再読み込みしてください。PCプレビューにも情景選択があります。
+
+車内から側面の窓を正面に見る簡易3D情景です。景色の走行スクロールはありません。車内・車外とも既存worldのAP並進を受けるため、刺激による見え方の変化はあります。刺激波形と同期処理は共通です。情景は開始イベントのstimulus.scene.environmentに記録します。Quest実機での見え方は未確認です。

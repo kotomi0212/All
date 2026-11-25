@@ -38,14 +38,16 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('trials',nargs='+',type=Path,help='Named recording directories; order defines anonymous A/B/C labels')
     parser.add_argument('--output',required=True,type=Path,help='New local output directory (must be git-ignored)')
+    parser.add_argument('--labels',nargs='+',help='Optional anonymous labels, one per trial')
     args=parser.parse_args()
+    if args.labels is not None and len(args.labels)!=len(args.trials):parser.error('--labels must match the trial count')
     OUT=args.output.resolve()
     if OUT.exists():raise FileExistsError('Choose a new output directory')
     OUT.mkdir(parents=True)
     fig,axes=plt.subplots(len(args.trials),1,figsize=(15,3.3*len(args.trials)),sharex=True,layout='constrained',squeeze=False)
     audit=[]
     for index,(ax,folder) in enumerate(zip(axes.flat,args.trials)):
-        s='Participant '+chr(65+index)
+        s=args.labels[index] if args.labels else 'Participant '+chr(65+index)
         stem=folder.name
         meta=json.loads((folder/f'{stem}_metadata.json').read_text(encoding='utf-8-sig'));params=meta['device_parameters']
         q=read(folder/f'{stem}_quest.csv',['pc_mapped_time_s','stimulus_elapsed_s','ap_displacement_m'])

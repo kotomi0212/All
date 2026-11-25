@@ -21,7 +21,7 @@ function connect(){
  ws.onclose=()=>{$('start').disabled=true;$('stop').disabled=true;$('status').textContent='自動再接続中…';setTimeout(connect,1000);};
  ws.onerror=()=>ws.close();
 }
-$('start').onclick=()=>{const delay=Number($('delay').value);if(!Number.isFinite(delay)||delay<3||delay>30){$('message').textContent='待ち時間は3～30秒にしてください';return;}if(ws.readyState===1){$('start').disabled=true;ws.send(JSON.stringify({type:'start',start_delay_s:delay,condition:$('condition').value}));}};
+$('start').onclick=()=>{const delay=Number($('delay').value);if(!Number.isFinite(delay)||delay<3||delay>30){$('message').textContent='待ち時間は3～30秒にしてください';return;}if(ws.readyState===1){$('start').disabled=true;ws.send(JSON.stringify({type:'start',start_delay_s:delay,condition:$('condition').value,environment:$('environment').value}));}};
 $('stop').onclick=()=>{if(ws.readyState===1)ws.send(JSON.stringify({type:'stop'}));};
 connect();
 })();

@@ -3,7 +3,7 @@ const $=id=>document.getElementById(id);let config=null,verification=null,frameR
 function render(){
  if(!config)return;
  $('time').value=time;$('elapsed').textContent=time.toFixed(2)+' / '+config.duration_s+' s';
- if(frameReady){const msg={type:'visual-set',time_s:time};if(!sent){msg.config=config;sent=true;}$('view').contentWindow.postMessage(msg,location.origin);}
+ if(frameReady){const msg={type:'visual-set',time_s:time,environment:$('environment').value};if(!sent){msg.config=config;sent=true;}$('view').contentWindow.postMessage(msg,location.origin);}
 }
 window.addEventListener('message',event=>{
  if(event.origin!==location.origin||event.source!==$('view').contentWindow)return;
@@ -11,6 +11,7 @@ window.addEventListener('message',event=>{
  if(event.data.type==='visual-state'){const s=event.data.state;$('live').textContent=`変位 ${s.x.toFixed(5)} m　速度 ${s.v.toFixed(5)} m/s　加速度 ${s.a.toFixed(5)} m/s²`;}
 });
 $('view').addEventListener('load',()=>{frameReady=true;sent=false;render();});
+$('environment').onchange=render;
 $('play').onclick=()=>{if(!config)return;if(time>=config.duration_s)time=0;playing=!playing;origin=performance.now()/1000-time;$('play').textContent=playing?'一時停止':'再生';render();};
 $('reset').onclick=()=>{playing=false;time=0;$('play').textContent='再生';render();};
 $('time').oninput=()=>{time=Number($('time').value);origin=performance.now()/1000-time;render();};

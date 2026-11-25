@@ -18,6 +18,7 @@ function model(){
 }
 function ready(){return !!config&&ws?.readyState===1&&now()-lastPong<2&&model()!==null&&immersed()&&visible()&&!returning&&lastFrame!==null&&now()-lastFrame<.25;}
 function applyScene(s={roomHeightM:3,roomSizeM:6,frontWallDistanceM:3,gridSpacingM:.5}){
+  window.TrainScene?.select(s.environment||'grid');
   const w=s.roomSizeM,h=s.roomHeightM,d=s.frontWallDistanceM,g=s.gridSpacingM,z=w/2-d;
   for(const [id,width,height,position,rotation] of [
     ['front',w,h,`0 ${h/2} ${-d}`,'0 0 0'],['back',w,h,`0 ${h/2} ${w-d}`,'0 180 0'],

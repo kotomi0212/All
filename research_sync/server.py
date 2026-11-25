@@ -17,7 +17,7 @@ from .acquisition import VendorCapture
 from .recording import export_recording
 from websockets.asyncio.server import serve
 
-STATIC={'/operator.html','/quest.html','/quest.js','/waveform.js','/fixation.js','/fixation_target.js','/operator.js','/grid.svg','/vendor/aframe.min.js'}
+STATIC={'/train-scene.js','/operator.html','/quest.html','/quest.js','/waveform.js','/fixation.js','/fixation_target.js','/operator.js','/grid.svg','/vendor/aframe.min.js'}
 
 def vendor_present():
     try:
@@ -78,7 +78,7 @@ async def run(args):
                     html=html.replace('<!--STIMULUS_OPTIONS-->',''.join(f'<option value="{escape(key)}">{escape(label)}</option>' for label,key in available_conditions().items()))
                 bootstrap='<script>history.replaceState(null,"",location.pathname+"#token="+'+json.dumps(token)+');window.controlWsPort='+str(args.ws_port)+';</script>'
                 html=html.replace('<script',bootstrap+'<script',1)
-                for name in ('quest.js','waveform.js','operator.js','fixation.js','fixation_target.js'):
+                for name in ('quest.js','waveform.js','operator.js','fixation.js','fixation_target.js','train-scene.js'):
                     html=html.replace('src="'+name+'"','src="'+name+'?v='+str((root/name).stat().st_mtime_ns)+'"')
                 body=html.encode('utf-8');self.send_response(200);self.send_header('Content-Type','text/html; charset=utf-8');self.send_header('Content-Length',str(len(body)));self.end_headers();self.wfile.write(body);return
             if path not in STATIC:self.send_error(404);return
@@ -199,6 +199,9 @@ async def run(args):
                         await ws.send(json.dumps(dict(type='error',message='Quest Browserのページを一度再読み込みして表示を更新してください')));continue
                     if trial or capture is not None or finishing or 'quest' not in peers.values():
                         await ws.send(json.dumps(dict(type='error',message='Questの接続と、前の試行の保存完了を確認してください')));continue
+                    environment=msg.get('environment','grid')
+                    if environment not in ('grid','train'):
+                        await ws.send(json.dumps(dict(type='error',message='Unknown environment')));continue
                     condition=msg.get('condition','multicosine')
                     if condition not in ('study_sweep90','study_multicosine10','study_multicosine10_equal_velocity','multicosine','none','dot','spinner','pilot_rest','pilot_five_x1p4',*[f'pilot_{kind}_x{n}' for kind in ('single','five') for n in (1,2,3)]):
                         await ws.send(json.dumps(dict(type='error',message='Unknown visual condition')));continue
@@ -219,7 +222,8 @@ async def run(args):
                         await ws.send(json.dumps(dict(type='error',message=str(error))));continue
                     config['eye_height_m']=state['eye_height_m'];config['eye_height_q_s']=state['eye_height_q_s']
                     config['scene']=json.loads((root/'scene.json').read_text(encoding='utf-8'))
-                    state.update(duration_s=config['duration_s'],condition=condition)
+                    config['scene']['environment']=environment
+                    state.update(duration_s=config['duration_s'],condition=condition,environment=environment)
                     await broadcast(dict(type='config',stimulus=config))
                     trial=str(uuid.uuid4());state.update(trial_id=trial,elapsed_s=0.,scheduled_pc_s=None,last_error=None,imu_warning=None)
                     launch(prepare(trial,role,delay))

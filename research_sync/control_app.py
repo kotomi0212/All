@@ -51,6 +51,10 @@ class ControlApp:
         self.condition=tk.StringVar(value=next(iter(self.conditions)))
         self.condition_box=ttk.Combobox(frame,textvariable=self.condition,values=list(self.conditions),state='readonly',width=56)
         self.condition_box.pack(anchor='w');self.condition_box.bind('<<ComboboxSelected>>',lambda e:self.start_button.configure(text='選択した試行を予約'))
+        self.environment=tk.StringVar(value='従来の格子室')
+        ttk.Label(frame,text='情景').pack(anchor='w')
+        self.environment_box=ttk.Combobox(frame,textvariable=self.environment,values=['従来の格子室','電車の車窓（景色の自動スクロールなし）'],state='readonly',width=56)
+        self.environment_box.pack(anchor='w')
         height_row=ttk.Frame(frame);height_row.pack(fill='x',pady=5)
         self.height_button=ttk.Button(height_row,text='目線高さを取得し直す',command=lambda:self.submit(self.command(dict(type='capture_height'))),state='disabled')
         self.height_button.pack(side='left');self.eye_height=tk.StringVar(value='未取得（Questを装着し、VRに入ってから取得）')
@@ -156,7 +160,7 @@ class ControlApp:
             participant=participant_info(dict(subject=self.subject.get(),height_cm=self.height_cm.get(),trial_number=self.trial_number.get()))
             delay=float(self.delay.get())
             if not 3<=delay<=30:raise ValueError('待ち時間は3～30秒にしてください')
-            self.start_button['state']='disabled';self.submit(self.command(dict(type='start',start_delay_s=delay,condition=self.conditions[self.condition.get()],participant=participant)))
+            self.start_button['state']='disabled';self.submit(self.command(dict(type='start',start_delay_s=delay,condition=self.conditions[self.condition.get()],environment='train' if self.environment.get().startswith('電車') else 'grid',participant=participant)))
         except Exception as error:messagebox.showerror('開始できません',str(error))
     def stop(self):self.submit(self.command(dict(type='stop')))
     def show_status(self,s):
@@ -176,6 +180,7 @@ class ControlApp:
         for field in self.participant_fields:field['state']='disabled' if s['busy'] or self.review_busy else 'normal'
         self.reset_number['state']='disabled' if s['busy'] or self.review_busy else 'normal'
         self.condition_box['state']='disabled' if s['busy'] else 'readonly'
+        self.environment_box['state']='disabled' if s['busy'] else 'readonly'
         self.folder_button['state']='disabled' if self.connected else 'normal'
         self.connect_button['state']='disabled' if s['busy'] or self.connecting else 'normal'
         self.start_button['state']='normal' if enabled and not pending and not self.review_busy else 'disabled';self.stop_button['state']='normal' if self.connected else 'disabled'

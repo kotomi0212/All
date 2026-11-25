@@ -1,5 +1,19 @@
 # Head IMU gravity compensation (provisional)
 
+## Cycle-resolved visual response analysis
+
+```powershell
+.\.venv\Scripts\python.exe -X utf8 research_sync/analysis_tools/analyze_periodic_response.py --output research_sync/results/NEW_OUTPUT
+.\.venv\Scripts\python.exe -X utf8 research_sync/analysis_tools/periodic_reference_report.py --output research_sync/results/NEW_OUTPUT
+.\.venv\Scripts\python.exe -m unittest discover -s research_sync/analysis_tools -p test_periodic_response.py
+```
+
+The first command inventories metadata under `research_sync/recordings` and `2611`, deduplicates trial IDs, and selects complete equal-component-velocity ten-tone trials. It checks logged input frequencies, uses stored clock mapping without optimizing shifts, and estimates native-timestamp harmonic coefficients for four full 20 s cycles. Output CSVs contain per-cycle complex coefficients, aggregated FRFs, coherence, circular phase variation, S/N and input/synchronization audits. Each participant stays separate; figure labels are anonymous. The second command writes a Japanese interpretation and historical rest references and verifies source hashes. Output directories must be new and private (use ignored `research_sync/results`).
+
+The primary available output is provisional AP force/mass COM acceleration. Head Z remains raw sensor counts because lab-coordinate gravity compensation is unvalidated. Sonobe COM position is marked unavailable when participant body inertia/COM height are not confirmed; earlier male/female default curves are not adopted as individual parameters. No original-paper Tv/gamma estimate is reported without independent participant controller parameters and reliable phase. Full assumptions and equations are recorded in the generated RESULTS.md.
+
+## Exploratory head gravity compensation
+
 Run with repository venv dependencies from `research_sync/requirements.txt`:
 
 ```powershell
