@@ -28,8 +28,8 @@ def analyze(folder, fft=False, cycle_data=None, time_data=None, reaction_sign=-1
     meta = json.loads((folder / f'{stem}_metadata.json').read_text(encoding='utf-8-sig'))
     stim = meta['stimulus']
     f = np.array(stim['frequencies_hz'])
-    if meta['termination'] != 'complete' or len(f) != 10:
-        raise ValueError(f'{stem}: expected a complete ten-tone trial')
+    if meta['termination'] != 'complete' or np.unique(f[(f > 0) & (f < .5)]).size < 2:
+        raise ValueError(f'{stem}: expected a complete trial with two or more stimulus frequencies below 0.5 Hz')
     start, stop = stim['analysis_interval_s']
     cycle_s = period(f)
     cycles = round((stop - start) / cycle_s)
