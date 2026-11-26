@@ -95,7 +95,8 @@ def main():
         if not qp.exists():qp=folder/'quest.csv';fp=folder/'combalance.csv'
         q,qcols=table(qp);b,bcols=table(fp)
         alias=inv['participant'];tid=m['trial_id'];f=np.array(c['frequencies_hz']);T=period(f)
-        if len(f)!=10:raise ValueError('Not ten frequencies')
+        if len(f) != (5 if c.get('condition') == 'study_multicosine5_equal_velocity_low_band' else 10):
+            raise ValueError('Unexpected stimulus frequency count')
         start,stop=c['analysis_interval_s'];cycles=int(np.floor((stop-start)/T+1e-9));stop=start+cycles*T
         if m.get('termination')!='complete':raise ValueError('Incomplete trial')
         qt,qe,ft=q['pc_mapped_time_s'],q['stimulus_elapsed_s'],b['pc_estimated_sample_time_s']
@@ -138,9 +139,9 @@ def main():
         grid=np.arange(start,stop,.01)
         uniform_velocity=np.interp(grid,qe,q['ap_velocity_m_s'])
         fft_f=np.fft.rfftfreq(len(grid),.01);fft_a=2*abs(np.fft.rfft(uniform_velocity-uniform_velocity.mean()))/len(grid)
-        peak_indices=np.argsort(fft_a[1:])[-10:]+1
+        peak_indices=np.argsort(fft_a[1:])[-len(f):]+1
         observed_frequencies=np.sort(fft_f[peak_indices])
-        if not np.allclose(observed_frequencies,np.sort(f),atol=1e-6):raise ValueError('Configuration and strongest ten logged input frequencies differ')
+        if not np.allclose(observed_frequencies,np.sort(f),atol=1e-6):raise ValueError('Configuration and strongest logged input frequencies differ')
         write(out/(alias.replace(' ','_')+'_input_frequencies.csv'),[dict(config_hz=a,logged_fft_peak_hz=b,source_used='metadata exact frequencies; confirmed by logged velocity') for a,b in zip(f,observed_frequencies)])
         for cycle in range(cycles):
             a=start+cycle*T;z=a+T;qm=(qe>=a)&(qe<z);bm=(elapsed>=a)&(elapsed<z)
