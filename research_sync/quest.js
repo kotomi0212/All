@@ -78,6 +78,7 @@ function onMessage(event){
   const m=JSON.parse(event.data);
   if(m.type==='config'){
     config=m.stimulus;applyScene(config.scene);
+    if(config.waveform==='ap_velocity_log_downsweep')ResearchWaveform.evaluate(0,config);
     window.FixationTarget?.configure(scene(),config.fixation);
     send({type:'setup',q_s:now(),reference:'fixed local-floor origin',ap_positive:'world -Z',wall_distance_m:config.scene?.frontWallDistanceM??3,wall_width_m:config.scene?.roomSizeM??6,wall_height_m:config.scene?.roomHeightM??3,grid_spacing_m:config.scene?.gridSpacingM??.5,alignment_required:false});
     if(pendingEnded){send(pendingEnded);pendingEnded=null;}
@@ -112,7 +113,7 @@ function connect(){
   const socket=new WebSocket(url);ws=socket;probes.length=0;lastPong=-Infinity;config=null;
   socket.onopen=()=>{
     if(ws!==socket)return;attempt=0;
-    send({role:'quest',token,user_agent:navigator.userAgent,client_version:'pc-control-v5'});
+    send({role:'quest',token,user_agent:navigator.userAgent,client_version:'pc-control-v6'});
     send({type:'capabilities',secure_context:window.isSecureContext,xr_available:!!navigator.xr,user_agent:navigator.userAgent});ui(true);
   };
   socket.onmessage=e=>{if(ws===socket)onMessage(e);};

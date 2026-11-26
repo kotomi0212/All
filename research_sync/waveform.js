@@ -1,5 +1,44 @@
 (function(root){
+  const apDownsweepCache=new WeakMap();
+
+  function evaluateApDownsweep(t,c){
+    let data=apDownsweepCache.get(c);
+    const dt=c.sample_step_s;
+    if(!data){
+      const k=Math.log(c.end_frequency_hz/c.start_frequency_hz)/c.duration_s;
+      const omega0=2*Math.PI*c.start_frequency_hz;
+      const phaseAt=time=>c.initial_phase_rad+omega0*Math.expm1(k*time)/k;
+      const intervals=Math.round(c.duration_s/dt);
+      const positions=new Float64Array(intervals+1);
+      positions[0]=c.initial_position_m;
+      let previousVelocity=c.velocity_amplitude_m_s*Math.sin(c.initial_phase_rad);
+      for(let i=1;i<=intervals;i++){
+        const velocity=c.velocity_amplitude_m_s*Math.sin(phaseAt(i*dt));
+        positions[i]=positions[i-1]+(previousVelocity+velocity)*dt/2;
+        previousVelocity=velocity;
+      }
+      data={positions,phaseAt,k,omega0};
+      apDownsweepCache.set(c,data);
+    }
+    const {positions,phaseAt,k,omega0}=data;
+    const last=positions.length-1;
+    if(t<0)return{x:positions[0],v:0,a:0};
+    if(t>c.duration_s)return{x:positions[last],v:0,a:0};
+
+    const phase=phaseAt(t);
+    const v=c.velocity_amplitude_m_s*Math.sin(phase);
+    const a=c.velocity_amplitude_m_s*omega0*Math.exp(k*t)*Math.cos(phase);
+    if(t===c.duration_s)return{x:positions[last],v,a};
+    const i=Math.min(last-1,Math.floor(t/dt));
+    const sampleTime=i*dt;
+    const sampleVelocity=c.velocity_amplitude_m_s*Math.sin(phaseAt(sampleTime));
+    // Integrate the fractional last step when a display frame falls between samples.
+    const x=positions[i]+(sampleVelocity+v)*(t-sampleTime)/2;
+    return{x,v,a};
+  }
+
   function evaluate(t,c){
+    if(c.waveform==='ap_velocity_log_downsweep')return evaluateApDownsweep(t,c);
     if(c.waveform==='sampled_centered_sweep'){
       const T=c.duration_s,h=c.sample_step_s,s=c.samples_xva;
       if(t<0)return{x:s[0][0],v:0,a:0};

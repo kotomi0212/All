@@ -10,6 +10,7 @@ import tempfile
 
 STIMULI={'multicosine':'90s_multicosine','none':'30s_no_fixation','dot':'30s_red_dot','spinner':'30s_loading'}
 STIMULI.update({'study_sweep90':'90s_sweep_centered','study_multicosine10':'100s_multicosine10'})
+STIMULI['study_sweep300'] = '300s_ap_log_downsweep'
 STIMULI.update({'study_multicosine10_x4':'100s_multicosine10_x4','study_five_x4':'100s_five_x4'})
 STIMULI.update({'study_multicosine10_equal_velocity':'100s_multicosine10_equal_velocity'})
 STIMULI['study_multicosine5_equal_velocity_low_band'] = '100s_multicosine5_equal_velocity_low_band'

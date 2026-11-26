@@ -84,7 +84,7 @@ for(const id of ['pilot_single_x3','pilot_five_x1p4']){
 }
 console.log('PASS: 40/100-second pilot profiles log applied frames and finish at configured duration');
 
-for(const id of ['study_sweep90','study_multicosine10']){
+for(const id of ['study_sweep90','study_sweep300','study_multicosine10']){
  const c=JSON.parse(fs.readFileSync(__dirname+'/study_profiles/'+id+'.json'));
  const h=harness();h.open();h.sync();h.deliver({type:'config',stimulus:c});
  h.deliver({type:'start',trial_id:id,scheduled_pc_s:h.clock+103});drive(h,Math.ceil((c.duration_s+3.1)*10));
@@ -98,6 +98,17 @@ for(const id of ['study_sweep90','study_multicosine10']){
  assert(Math.abs(h.world.position.z-(base-frame.ap_m))<1e-10,'Next trial must start from the held baseline');
 }
 console.log('PASS: new sweep/multicosine render, log, complete and preserve the world baseline');
+
+const sweep300=JSON.parse(fs.readFileSync(__dirname+'/study_profiles/study_sweep300.json'));
+assert.equal(waveform.evaluate(0,sweep300).x,0);
+assert.equal(waveform.evaluate(0,sweep300).v,0);
+const firstStep=waveform.evaluate(.001,sweep300);
+assert(Math.abs(firstStep.x-2.1990980948893911e-7)<1e-15);
+const lastStep=waveform.evaluate(300,sweep300);
+assert(Math.abs(lastStep.x-(-.22782492426697587))<1e-12);
+assert(Math.abs(lastStep.v-(-.063732507942320812))<1e-12);
+assert.deepEqual(waveform.evaluate(301,sweep300),{x:lastStep.x,v:0,a:0});
+console.log('PASS: 300-second sweep matches CSV endpoints and the first integration step');
 
 // Near-wall scene changes the reference distance while preserving room and grid dimensions.
 const nearRoom=harness();nearRoom.open();

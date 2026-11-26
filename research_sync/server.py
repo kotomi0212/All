@@ -15,6 +15,7 @@ import uuid
 from pathlib import Path
 from .acquisition import VendorCapture
 from .recording import export_recording
+from .study_stimuli import LABELS
 from websockets.asyncio.server import serve
 
 STATIC={'/train-scene.js','/operator.html','/quest.html','/quest.js','/waveform.js','/fixation.js','/fixation_target.js','/operator.js','/grid.svg','/vendor/aframe.min.js'}
@@ -164,7 +165,7 @@ async def run(args):
             if role=='quest' and 'quest' in peers.values():await ws.close(1008,'one Quest per session');return
             peers[ws]=role
             if hello.get('subscribe_status'):subscribers.add(ws)
-            if role=='quest':rtts.clear();state.update(sync_probes=0,quest_last_seen_s=time.perf_counter(),quest_software_current=hello.get('client_version')=='pc-control-v5' or args.allow_desktop_simulation)
+            if role=='quest':rtts.clear();state.update(sync_probes=0,quest_last_seen_s=time.perf_counter(),quest_software_current=hello.get('client_version')=='pc-control-v6' or args.allow_desktop_simulation)
             record('connected',role=role)
             await ws.send(json.dumps(dict(type='config',stimulus=config,start_delay_s=args.start_delay,vendor_enabled=bool(args.vendor_directory))))
             async for raw in ws:
@@ -203,7 +204,7 @@ async def run(args):
                     if environment not in ('grid','grid_near','train'):
                         await ws.send(json.dumps(dict(type='error',message='Unknown environment')));continue
                     condition=msg.get('condition','multicosine')
-                    if condition not in ('study_sweep90','study_multicosine10','study_multicosine10_equal_velocity','study_multicosine5_equal_velocity_low_band','multicosine','none','dot','spinner','pilot_rest','pilot_five_x1p4',*[f'pilot_{kind}_x{n}' for kind in ('single','five') for n in (1,2,3)]):
+                    if condition not in LABELS.values() and condition not in ('multicosine','none','dot','spinner','pilot_rest','pilot_five_x1p4',*[f'pilot_{kind}_x{n}' for kind in ('single','five') for n in (1,2,3)]):
                         await ws.send(json.dumps(dict(type='error',message='Unknown visual condition')));continue
                     if state['height_pending']:
                         await ws.send(json.dumps(dict(type='error',message='目線高さの取得完了を待ってください')));continue

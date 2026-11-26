@@ -1,4 +1,4 @@
-"""Runnable 2026-11-24 visual profiles for the acquisition application."""
+"""Runnable visual profiles for the acquisition application."""
 import copy
 import json
 from pathlib import Path
@@ -8,6 +8,7 @@ ROOT=Path(__file__).resolve().parent/'study_profiles'
 LOW_BAND_EQUAL_VELOCITY = 'study_multicosine5_equal_velocity_low_band'
 LABELS={
     '90秒 スイープ 0.70→0.05 Hz（中心固定）':'study_sweep90',
+    '300秒 対数スイープ 0.70→0.05 Hz（速度振幅10 cm/s）':'study_sweep300',
     '100秒 マルチコサイン10周波数（20秒×4周期）':'study_multicosine10',
     '10周波数 100秒・速度成分一定【最大加速度2.09 m/s²】':'study_multicosine10_equal_velocity',
     '5周波数 100秒・各速度3.7 cm/s（0.05–0.45 Hz）':LOW_BAND_EQUAL_VELOCITY,
@@ -64,6 +65,11 @@ def profile(condition):
         peaks=np.max(abs(samples),axis=0)
         if np.any(peaks>np.array([.30,.10,.20])):raise ValueError('Sweep exceeds configured bounds')
         if max(abs(samples[[0,-1],1]))>1e-8:raise ValueError('Sweep endpoint velocity is not zero')
+    elif c['waveform']=='ap_velocity_log_downsweep':
+        if (c['duration_s'], c['start_frequency_hz'], c['end_frequency_hz'],
+            c['velocity_amplitude_m_s'], c['sample_step_s'],
+            c['initial_phase_rad'], c['initial_position_m']) != (300, .70, .05, .10, .001, 0, 0):
+            raise ValueError('Invalid 300-second AP downsweep parameters')
     elif c['waveform']=='pilot_acceleration_multicosine':
         from .low_band import check_limits
         _,violations=check_limits(c)
