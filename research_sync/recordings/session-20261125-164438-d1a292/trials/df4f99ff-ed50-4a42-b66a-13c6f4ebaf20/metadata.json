@@ -1,0 +1,719 @@
+{
+  "trial_id": "df4f99ff-ed50-4a42-b66a-13c6f4ebaf20",
+  "termination": "pc-stop",
+  "quest_frames": 0,
+  "quest_clock": {
+    "quest_origin_s": 505.05521827309167,
+    "pc_origin_s": 177912.90382994182,
+    "slope": 0.9999641247058174,
+    "drift_ppm": -35.875294182585726,
+    "probe_span_s": 498.00049999999817,
+    "probes": 1995,
+    "selected": 996,
+    "rtt_min_s": 0.0015750999828014756,
+    "rtt_median_s": 0.003805100000249695,
+    "rtt_p95_s": 0.00978500999038374,
+    "residual_rms_s": 0.08461604270294087,
+    "selected_residual_rms_s": 0.00015885739291369928,
+    "selected_residual_p95_abs_s": 0.00032044599356595427,
+    "uncertainty_note": "RTT/2 is an asymmetry allowance, not measured absolute accuracy. Optical and sensor latency excluded.",
+    "asymmetry_allowance_max_s": 1.4441875499917387,
+    "extrapolation_warning": "Do not extrapolate outside probe range without additional validation",
+    "quest_range_s": [
+      253.274,
+      751.78
+    ]
+  },
+  "pc_time_basis": "Windows QPC / Python perf_counter seconds",
+  "scene": {
+    "roomHeightM": 3,
+    "roomSizeM": 6,
+    "frontWallDistanceM": 3,
+    "gridSpacingM": 0.5
+  },
+  "processing": "Acquisition CSV export only; no filters, COM or FRF",
+  "events_file": "C:\\Users\\atvma\\gitseguchi\\All\\research_sync\\recordings\\session-20261125-164438-d1a292\\events.jsonl",
+  "combalance_samples": 190,
+  "timing_validation": "Quest clock mapped to PC. Force samples retain PC receipt times; acquisition latency not independently calibrated.",
+  "pc_commands": [
+    {
+      "kind": "command_start",
+      "pc_monotonic_s": 178156.1550377,
+      "pc_epoch_s": 1795593477.968145,
+      "trial_id": "df4f99ff-ed50-4a42-b66a-13c6f4ebaf20",
+      "scheduled_pc_s": 178161.1550322,
+      "initiator": "operator",
+      "start_delay_s": 5.0,
+      "stimulus": {
+        "status": "runnable_in_acquisition_app",
+        "waveform": "pilot_acceleration_multicosine",
+        "duration_s": 100,
+        "analysis_interval_s": [
+          10,
+          90
+        ],
+        "ramp_s": 10,
+        "period_s": 20,
+        "analysis_cycles": 4,
+        "frequencies_hz": [
+          0.05,
+          0.1,
+          0.2,
+          0.3,
+          0.45
+        ],
+        "phases_rad": [
+          2.426723948,
+          1.61000492,
+          2.544845225,
+          -0.38966311,
+          2.941852954
+        ],
+        "normalization": "0.037 m/s per component; phases optimized to reduce peak displacement",
+        "maxima": {
+          "displacement_m": {
+            "value": 0.19198425116971446,
+            "time_s": 61.980308766495504
+          },
+          "velocity_m_s": {
+            "value": 0.09980219492334251,
+            "time_s": 26.863415140760186
+          },
+          "acceleration_m_s2": {
+            "value": 0.19989074875994994,
+            "time_s": 76.82427583461217
+          }
+        },
+        "formula": "x0=-sum(A*cos(2*pi*f*t+phi)/(2*pi*f)^2); x=e*x0; v=e*v0+e_dot*x0; a=e*a0+2*e_dot*v0+e_ddot*x0",
+        "note": "Five components in the 10–90 s core; onset/offset ramps add sidebands.",
+        "schema": 4,
+        "condition": "study_multicosine5_equal_velocity_low_band",
+        "enabled": true,
+        "hold_final_position": false,
+        "fixation": null,
+        "velocity_component_m_s": 0.037,
+        "acceleration_components_m_s2": [
+          0.011623892818282234,
+          0.023247785636564468,
+          0.046495571273128936,
+          0.06974335690969341,
+          0.1046150353645401
+        ],
+        "engineering_limits": {
+          "displacement_m": 0.3,
+          "velocity_m_s": 0.1,
+          "acceleration_m_s2": 0.2
+        },
+        "eye_height_m": null,
+        "eye_height_q_s": null,
+        "scene": {
+          "roomHeightM": 3,
+          "roomSizeM": 6,
+          "frontWallDistanceM": 1.5,
+          "gridSpacingM": 0.5,
+          "environment": "grid_near"
+        }
+      },
+      "participant": {
+        "subject": "seguchi_test",
+        "height_cm": 148.0,
+        "trial_number": 1
+      }
+    },
+    {
+      "kind": "command_stop",
+      "pc_monotonic_s": 178158.0508554,
+      "pc_epoch_s": 1795593479.8638253,
+      "trial_id": "df4f99ff-ed50-4a42-b66a-13c6f4ebaf20"
+    }
+  ],
+  "stimulus": {
+    "status": "runnable_in_acquisition_app",
+    "waveform": "pilot_acceleration_multicosine",
+    "duration_s": 100,
+    "analysis_interval_s": [
+      10,
+      90
+    ],
+    "ramp_s": 10,
+    "period_s": 20,
+    "analysis_cycles": 4,
+    "frequencies_hz": [
+      0.05,
+      0.1,
+      0.2,
+      0.3,
+      0.45
+    ],
+    "phases_rad": [
+      2.426723948,
+      1.61000492,
+      2.544845225,
+      -0.38966311,
+      2.941852954
+    ],
+    "normalization": "0.037 m/s per component; phases optimized to reduce peak displacement",
+    "maxima": {
+      "displacement_m": {
+        "value": 0.19198425116971446,
+        "time_s": 61.980308766495504
+      },
+      "velocity_m_s": {
+        "value": 0.09980219492334251,
+        "time_s": 26.863415140760186
+      },
+      "acceleration_m_s2": {
+        "value": 0.19989074875994994,
+        "time_s": 76.82427583461217
+      }
+    },
+    "formula": "x0=-sum(A*cos(2*pi*f*t+phi)/(2*pi*f)^2); x=e*x0; v=e*v0+e_dot*x0; a=e*a0+2*e_dot*v0+e_ddot*x0",
+    "note": "Five components in the 10–90 s core; onset/offset ramps add sidebands.",
+    "schema": 4,
+    "condition": "study_multicosine5_equal_velocity_low_band",
+    "enabled": true,
+    "hold_final_position": false,
+    "fixation": null,
+    "velocity_component_m_s": 0.037,
+    "acceleration_components_m_s2": [
+      0.011623892818282234,
+      0.023247785636564468,
+      0.046495571273128936,
+      0.06974335690969341,
+      0.1046150353645401
+    ],
+    "engineering_limits": {
+      "displacement_m": 0.3,
+      "velocity_m_s": 0.1,
+      "acceleration_m_s2": 0.2
+    },
+    "eye_height_m": null,
+    "eye_height_q_s": null,
+    "scene": {
+      "roomHeightM": 3,
+      "roomSizeM": 6,
+      "frontWallDistanceM": 1.5,
+      "gridSpacingM": 0.5,
+      "environment": "grid_near"
+    }
+  },
+  "participant": {
+    "subject": "seguchi_test",
+    "height_cm": 148.0,
+    "trial_number": 1
+  },
+  "raw_directory": "C:\\Users\\atvma\\gitseguchi\\All\\research_sync\\recordings\\session-20261125-164438-d1a292\\trials\\df4f99ff-ed50-4a42-b66a-13c6f4ebaf20\\combalance_raw",
+  "device_parameters": {
+    "Status": "Idle",
+    "Ready": false,
+    "Serial": "MFP-0006",
+    "Version": "Ver.1.1.0",
+    "Frequency": 100,
+    "Matome": 2,
+    "Prf": {
+      "shape": [
+        12
+      ],
+      "values": [
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181,
+        0.113181
+      ]
+    },
+    "Npu": {
+      "shape": [
+        12
+      ],
+      "values": [
+        0.455,
+        0.455,
+        0.307,
+        0.455,
+        0.455,
+        0.307,
+        0.455,
+        0.455,
+        0.307,
+        0.455,
+        0.455,
+        0.307
+      ]
+    },
+    "ForceZero": {
+      "shape": [
+        12
+      ],
+      "values": [
+        32856,
+        32673,
+        32834,
+        32799,
+        32792,
+        32657,
+        32662,
+        32736,
+        32669,
+        32885,
+        32890,
+        32813
+      ]
+    },
+    "Itf6x12": {
+      "shape": [
+        72
+      ],
+      "values": [
+        0.434367,
+        -0.196652,
+        0.040276,
+        0.400519,
+        0.069133,
+        -0.020584,
+        0.37562,
+        -0.001852,
+        0.049374,
+        0.339761,
+        -0.148077,
+        -0.073581,
+        -0.016005,
+        0.61695,
+        -0.106825,
+        0.085913,
+        0.479629,
+        0.039377,
+        0.184791,
+        0.487671,
+        0.046994,
+        0.08698,
+        0.627914,
+        0.03532,
+        -0.070802,
+        0.048385,
+        0.950318,
+        -0.028983,
+        -0.046322,
+        0.993393,
+        -0.048327,
+        0.02102,
+        1.05749,
+        -0.005106,
+        0.047116,
+        0.986901,
+        -0.004239,
+        -0.013808,
+        0.133575,
+        -0.001788,
+        -0.009996,
+        0.129671,
+        0.000226,
+        -0.012808,
+        -0.142486,
+        -0.004434,
+        -0.013904,
+        -0.131866,
+        0.042634,
+        -0.01511,
+        -0.127245,
+        0.034796,
+        -0.001284,
+        0.129884,
+        0.03232,
+        -0.002813,
+        0.146072,
+        0.033359,
+        -0.010444,
+        -0.137413,
+        -0.087004,
+        0.108893,
+        -0.021986,
+        -0.090166,
+        -0.076976,
+        0.002147,
+        0.043974,
+        -0.116529,
+        -0.01709,
+        0.079819,
+        0.085504,
+        0.000939
+      ]
+    },
+    "AccelRange": "G8",
+    "AccelBW": "H1000",
+    "GyroRange": "D2000",
+    "GyroBW": "H1000",
+    "AccelPrf": {
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "values": [
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281,
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281,
+        6.10352e-05,
+        0.00012207,
+        0.000244141,
+        0.000488281,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "AccelZero": {
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "AccelItf": {
+      "shape": [
+        2,
+        4,
+        9
+      ],
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "GyroPrf": {
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "values": [
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756,
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756,
+        0.00762195,
+        0.0152439,
+        0.0304878,
+        0.0609756,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "GyroZero": {
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "values": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "GyroItf": {
+      "shape": [
+        2,
+        4,
+        9
+      ],
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "FpAz0": -0.0123,
+    "FpA": 0.14,
+    "FpB": 0.14,
+    "FullScale": {
+      "shape": [
+        6
+      ],
+      "values": [
+        50,
+        50,
+        1000,
+        300,
+        300,
+        15
+      ]
+    },
+    "PacketLostByteCount": 0,
+    "PacketErrorCount": 0,
+    "pc_monotonic_s": 178155.9404617,
+    "qpc_frequency": 10000000,
+    "original_batch_samples": 10,
+    "timer_resolution_1ms_request_succeeded": true,
+    "timing_note": "Host dequeue/read timestamps only; device acquisition timestamps not yet established"
+  },
+  "raw_sha256": "e64bb69c80a6dc12ec5157d87a7f3f42c8415b827df0e70047088026c79dad17",
+  "batch_samples": 2,
+  "sampling_hz": 100.0,
+  "force_sample_clock_estimate": {
+    "method": "lower-envelope affine fit of block receipt times; provisional",
+    "slope": 1.0,
+    "intercept_pc_s": 178156.1457489,
+    "absolute_acquisition_latency_s": null,
+    "independently_validated": false
+  },
+  "capture_end": {
+    "kind": "capture_stop",
+    "pc_s": 178158.2079929,
+    "blocks": 95,
+    "packet_lost_bytes": 0,
+    "packet_errors": 0
+  },
+  "force_coordinates": "Native manufacturer sensor axes, before AP remapping. Device coefficients applied; no software filter.",
+  "external_imu_quality": {
+    "status": "all_zero",
+    "samples": 190,
+    "nonzero_samples": 0,
+    "channel_min": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "channel_max": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "warning": "外部IMUの7chが全サンプル0です。頭部応答として使用しないでください。",
+    "calibration": "Raw counts only. Channel identities, physical units, orientation and gravity correction are not validated."
+  },
+  "weight_estimate": {
+    "body_mass_kg": null,
+    "status": "no_prestimulus_data",
+    "method": "abs(median(prestimulus sensor_Fz_N))/9.80665; provisional, includes worn equipment"
+  }
+}
