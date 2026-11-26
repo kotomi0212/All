@@ -98,3 +98,16 @@ for(const id of ['study_sweep90','study_multicosine10']){
  assert(Math.abs(h.world.position.z-(base-frame.ap_m))<1e-10,'Next trial must start from the held baseline');
 }
 console.log('PASS: new sweep/multicosine render, log, complete and preserve the world baseline');
+
+// Near-wall scene changes the reference distance while preserving room and grid dimensions.
+const nearRoom=harness();nearRoom.open();
+nearRoom.deliver({type:'config',stimulus:{...config,scene:{environment:'grid_near',roomSizeM:6,roomHeightM:3,frontWallDistanceM:1.5,gridSpacingM:.5}}});
+assert.equal(nearRoom.elements['#scene-front'].attributes.position[0],'0 1.5 -1.5');
+assert.equal(nearRoom.elements['#scene-back'].attributes.position[0],'0 1.5 4.5');
+assert.equal(nearRoom.elements['#scene-left'].attributes.position[0],'-3 1.5 1.5');
+assert.equal(nearRoom.elements['#scene-floor'].attributes.width[0],6);
+assert.equal(nearRoom.elements['#scene-front'].attributes.material[1],'12 6');
+assert.equal(nearRoom.messages.findLast(m=>m.type==='setup').wall_distance_m,1.5);
+nearRoom.deliver({type:'config',stimulus:{...config,scene:{environment:'grid',roomSizeM:6,roomHeightM:3,frontWallDistanceM:3,gridSpacingM:.5}}});
+assert.equal(nearRoom.elements['#scene-front'].attributes.position[0],'0 1.5 -3');
+console.log('PASS: 1.5 m wall scene preserves room dimensions/grid and switches back to 3 m');

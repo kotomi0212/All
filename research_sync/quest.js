@@ -79,7 +79,7 @@ function onMessage(event){
   if(m.type==='config'){
     config=m.stimulus;applyScene(config.scene);
     window.FixationTarget?.configure(scene(),config.fixation);
-    send({type:'setup',q_s:now(),reference:'fixed local-floor origin',ap_positive:'world -Z',wall_distance_m:3,wall_width_m:6,wall_height_m:3,grid_spacing_m:.5,alignment_required:false});
+    send({type:'setup',q_s:now(),reference:'fixed local-floor origin',ap_positive:'world -Z',wall_distance_m:config.scene?.frontWallDistanceM??3,wall_width_m:config.scene?.roomSizeM??6,wall_height_m:config.scene?.roomHeightM??3,grid_spacing_m:config.scene?.gridSpacingM??.5,alignment_required:false});
     if(pendingEnded){send(pendingEnded);pendingEnded=null;}
   }
   if(m.type==='capture_height'){

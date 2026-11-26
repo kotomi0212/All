@@ -200,7 +200,7 @@ async def run(args):
                     if trial or capture is not None or finishing or 'quest' not in peers.values():
                         await ws.send(json.dumps(dict(type='error',message='Questの接続と、前の試行の保存完了を確認してください')));continue
                     environment=msg.get('environment','grid')
-                    if environment not in ('grid','train'):
+                    if environment not in ('grid','grid_near','train'):
                         await ws.send(json.dumps(dict(type='error',message='Unknown environment')));continue
                     condition=msg.get('condition','multicosine')
                     if condition not in ('study_sweep90','study_multicosine10','study_multicosine10_equal_velocity','study_multicosine5_equal_velocity_low_band','multicosine','none','dot','spinner','pilot_rest','pilot_five_x1p4',*[f'pilot_{kind}_x{n}' for kind in ('single','five') for n in (1,2,3)]):
@@ -223,6 +223,7 @@ async def run(args):
                     config['eye_height_m']=state['eye_height_m'];config['eye_height_q_s']=state['eye_height_q_s']
                     config['scene']=json.loads((root/'scene.json').read_text(encoding='utf-8'))
                     config['scene']['environment']=environment
+                    if environment=='grid_near':config['scene']['frontWallDistanceM']=1.5
                     state.update(duration_s=config['duration_s'],condition=condition,environment=environment)
                     await broadcast(dict(type='config',stimulus=config))
                     trial=str(uuid.uuid4());state.update(trial_id=trial,elapsed_s=0.,scheduled_pc_s=None,last_error=None,imu_warning=None)
