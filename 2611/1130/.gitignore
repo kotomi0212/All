@@ -1,0 +1,10 @@
+# Local rendering checks and superseded document builders/outputs.
+_qa/
+build_report.py
+*.html
+1130_頭部COM解析まとめ.pdf
+export_sweep.cjs
+plot_current_sweep.py
+figures/equation_*.png
+figures/current_sweep300.png
+data/current_sweep300*

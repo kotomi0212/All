@@ -1,5 +1,53 @@
 (function(root){
   const apDownsweepCache=new WeakMap();
+  const bandSweepCache=new WeakMap();
+
+  function evaluateBandSweep(t,c){
+    let data=bandSweepCache.get(c);
+    if(!data){
+      if(c.duration_s!==100||c.onset_s!==10||c.sweep_s!==85||c.offset_s!==5||
+         c.sample_step_s!==.001||c.velocity_amplitude_m_s!==.1||
+         c.initial_position_m!==0||c.initial_phase_rad!==0||c.hold_final_position!==true||
+         !Number.isFinite(c.start_frequency_hz)||!Number.isFinite(c.end_frequency_hz)||
+         Math.min(c.start_frequency_hz,c.end_frequency_hz)<.05-1e-12||
+         Math.max(c.start_frequency_hz,c.end_frequency_hz)>.5+1e-12||
+         c.start_frequency_hz===c.end_frequency_hz)throw new Error('Invalid band-sweep configuration');
+      const start=c.onset_s,end=start+c.sweep_s,T=c.duration_s;
+      const f0=c.start_frequency_hz,f1=c.end_frequency_hz;
+      const k=Math.log(f1/f0)/c.sweep_s;
+      const phase0=2*Math.PI*f0*start;
+      const phaseEnd=phase0+2*Math.PI*f0*Math.expm1(k*c.sweep_s)/k;
+      function state(time){
+        let phase,f;
+        if(time<start){phase=2*Math.PI*f0*time;f=f0;}
+        else if(time<=end){const u=time-start;phase=phase0+2*Math.PI*f0*Math.expm1(k*u)/k;f=f0*Math.exp(k*u);}
+        else{phase=phaseEnd+2*Math.PI*f1*(time-end);f=f1;}
+        let e=1,ed=0;
+        if(time<=0||time>=T){e=0;}
+        else if(time<start||time>end){
+          const ramp=time<start?start:c.offset_s;
+          const u=time<start?time/ramp:(T-time)/ramp;
+          e=u*u*u*(10+u*(-15+6*u));
+          ed=30*u*u*(1-u)*(1-u)/ramp*(time<start?1:-1);
+        }
+        return {v:c.velocity_amplitude_m_s*e*Math.sin(phase),
+          a:c.velocity_amplitude_m_s*(ed*Math.sin(phase)+e*2*Math.PI*f*Math.cos(phase))};
+      }
+      const dt=c.sample_step_s,n=Math.round(T/dt),positions=new Float64Array(n+1);
+      let prev=state(0).v;
+      for(let i=1;i<=n;i++){
+        const next=state(i*dt).v;
+        positions[i]=positions[i-1]+(prev+next)*dt/2;prev=next;
+      }
+      data={positions,state};bandSweepCache.set(c,data);
+    }
+    const {positions,state}=data,T=c.duration_s,dt=c.sample_step_s,last=positions.length-1;
+    if(t<=0)return{x:positions[0],v:0,a:0};
+    if(t>=T)return{x:positions[last],v:0,a:0};
+    const q=state(t),i=Math.min(last-1,Math.floor(t/dt));
+    const x=positions[i]+(state(i*dt).v+q.v)*(t-i*dt)/2;
+    return{x,v:q.v,a:q.a};
+  }
 
   function evaluateApDownsweep(t,c){
     let data=apDownsweepCache.get(c);
@@ -38,6 +86,7 @@
   }
 
   function evaluate(t,c){
+    if(c.waveform==='ap_velocity_log_band_sweep')return evaluateBandSweep(t,c);
     if(c.waveform==='ap_velocity_log_downsweep')return evaluateApDownsweep(t,c);
     if(c.waveform==='sampled_centered_sweep'){
       const T=c.duration_s,h=c.sample_step_s,s=c.samples_xva;

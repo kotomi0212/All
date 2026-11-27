@@ -84,7 +84,8 @@ for(const id of ['pilot_single_x3','pilot_five_x1p4']){
 }
 console.log('PASS: 40/100-second pilot profiles log applied frames and finish at configured duration');
 
-for(const id of ['study_sweep90','study_sweep300','study_multicosine10']){
+const bandSweepIds=Array.from({length:3},(_,i)=>['up','down'].map(d=>`study_sweep100_band${i+1}_${d}`)).flat();
+for(const id of ['study_sweep90','study_sweep300','study_multicosine10',...bandSweepIds]){
  const c=JSON.parse(fs.readFileSync(__dirname+'/study_profiles/'+id+'.json'));
  const h=harness();h.open();h.sync();h.deliver({type:'config',stimulus:c});
  h.deliver({type:'start',trial_id:id,scheduled_pc_s:h.clock+103});drive(h,Math.ceil((c.duration_s+3.1)*10));

@@ -1,0 +1,28 @@
+{
+  "objective": "Equal-weight mean squared principal circular phase residual; independent fits per participant.",
+  "models": [
+    "delta=-360*f*tau",
+    "delta=180-360*f*tau"
+  ],
+  "search_seconds": [
+    -2,
+    2
+  ],
+  "bands": {
+    "all": [
+      0.05,
+      0.45
+    ],
+    "low_0p7": [
+      0.05,
+      0.45
+    ]
+  },
+  "limitations": [
+    "Exploratory descriptive fit; no uncertainty or coherence available.",
+    "Search range is an assumption, not a measured bound. Frequency grid 0.05 Hz gives exact delay aliasing every 20 seconds.",
+    "Negative fitted delay means phase slope consistent with COM leading within this model, not causality.",
+    "Estimated device timestamps, head gravity correction, COM axes/signs and anthropometry remain provisional.",
+    "No free phase intercept; compare only zero and 180-degree intercepts. No manual phase unwrapping."
+  ]
+}

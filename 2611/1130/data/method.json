@@ -1,0 +1,23 @@
+{
+  "subjects": [
+    "seguchi",
+    "otsubo",
+    "takato"
+  ],
+  "window_s": [
+    30.0,
+    90.0
+  ],
+  "frequencies_hz": [
+    0.05,
+    0.1,
+    0.2,
+    0.3,
+    0.45
+  ],
+  "input": "Three logged stimulus channels; joint least squares includes all 10 excited frequencies as nuisance terms, report only selected frequencies. Intercept and trend included.",
+  "head": "Existing calibrated, provisional gravity-corrected acceleration tau=30s; velocity=A/(iw), displacement=A/(iw)^2 at each excited frequency. No 1Hz position filter applied.",
+  "com": "Recomputed unfiltered position, male coefficients: Rx=Fy, Ny_contact=Mx-0.0123*Fy; X=(Ny_contact-c*Fy)/(mb*g). Same facing as heel-drop reference confirmed by user. Velocity=iwX, acceleration=(iw)^2X.",
+  "phase": "Wrapped [-180,180]. PC clock mapping, device delay uncalibrated.",
+  "limitations": "Head gravity compensation provisional. OEM AP mapping and origin correction follow standing_analysis.py; same physical facing confirmed by user, horizontal-force known-load calibration still absent. Mass/anthropometry provisional. One trial per participant; no confidence intervals or coherence inferred."
+}

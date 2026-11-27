@@ -10,6 +10,24 @@ from .named_recording import STIMULI
 from .low_band import evaluate
 
 class StudyStimuliTests(unittest.TestCase):
+    def test_band_sweep_profiles_and_independent_copies(self):
+        from .band_sweeps import PROFILES, EDGES
+        self.assertEqual(len(PROFILES),6)
+        for name in PROFILES:
+            c=select_stimulus({},name)
+            self.assertEqual(c['duration_s'],100)
+            self.assertEqual(c['analysis_interval_s'],[10,95])
+            self.assertEqual(c['onset_s']+c['sweep_s']+c['offset_s'],100)
+            self.assertIn(name,available_conditions().values())
+            self.assertIn(name,STIMULI)
+            self.assertEqual(c,json.loads((ROOT/f'{name}.json').read_text(encoding='utf-8')))
+            c['analysis_interval_s'][0]=0
+            self.assertEqual(profile(name)['analysis_interval_s'],[10,95])
+        self.assertAlmostEqual(EDGES[-1],.5)
+        self.assertAlmostEqual(EDGES[1]/EDGES[0],EDGES[3]/EDGES[2])
+        for old in ('study_sweep90','study_sweep300'):
+            self.assertNotIn(old,available_conditions().values())
+            with self.assertRaises(ValueError):select_stimulus({},old)
     def test_new_profiles_and_enabled_catalogue(self):
         conditions=available_conditions()
         self.assertEqual(list(conditions.values())[:len(LABELS)],list(LABELS.values()))
@@ -46,7 +64,7 @@ class StudyStimuliTests(unittest.TestCase):
             with self.assertRaises(ValueError):pilot_profile(condition)
 
     def test_browser_sweep_matches_independent_design_samples(self):
-        c=profile('study_sweep90')
+        c=json.loads((ROOT/'study_sweep90.json').read_text(encoding='utf-8'))
         reference=np.array(json.loads((ROOT/'verification_samples.json').read_text()))
         code="const fs=require('fs'),w=require('./research_sync/waveform.js'),q=JSON.parse(fs.readFileSync(0,'utf8'));console.log(JSON.stringify(q.t.map(t=>w.evaluate(t,q.c))));"
         result=subprocess.run(['node','-e',code],input=json.dumps(dict(c=c,t=reference[:,0].tolist())),text=True,capture_output=True,check=True,cwd=ROOT.parents[1])
@@ -61,7 +79,7 @@ class StudyStimuliTests(unittest.TestCase):
         self.assertEqual(len(c['frequencies_hz']),10)
         np.testing.assert_allclose(evaluate([0,100],c),0,atol=1e-12)
         code="const fs=require('fs'),w=require('./research_sync/waveform.js'),c=JSON.parse(fs.readFileSync(0,'utf8'));let worst=[0,0];for(let t=.013;t<89.99;t+=.137){const h=1e-5,l=w.evaluate(t-h,c),r=w.evaluate(t+h,c),s=w.evaluate(t,c);worst[0]=Math.max(worst[0],Math.abs((r.x-l.x)/(2*h)-s.v));worst[1]=Math.max(worst[1],Math.abs((r.v-l.v)/(2*h)-s.a));}console.log(JSON.stringify(worst));"
-        result=subprocess.run(['node','-e',code],input=json.dumps(profile('study_sweep90')),text=True,capture_output=True,check=True,cwd=ROOT.parents[1])
+        result=subprocess.run(['node','-e',code],input=json.dumps(json.loads((ROOT/'study_sweep90.json').read_text(encoding='utf-8'))),text=True,capture_output=True,check=True,cwd=ROOT.parents[1])
         self.assertLess(max(json.loads(result.stdout)),1e-7)
 
 if __name__=='__main__':unittest.main()

@@ -3,18 +3,20 @@ import copy
 import json
 from pathlib import Path
 import numpy as np
+from .band_sweeps import LABELS as BAND_LABELS, PROFILES as BAND_PROFILES, profile as band_profile
 
 ROOT=Path(__file__).resolve().parent/'study_profiles'
 LOW_BAND_EQUAL_VELOCITY = 'study_multicosine5_equal_velocity_low_band'
 LABELS={
-    '90秒 スイープ 0.70→0.05 Hz（中心固定）':'study_sweep90',
-    '300秒 対数スイープ 0.70→0.05 Hz（速度振幅10 cm/s）':'study_sweep300',
     '100秒 マルチコサイン10周波数（20秒×4周期）':'study_multicosine10',
     '10周波数 100秒・速度成分一定【最大加速度2.09 m/s²】':'study_multicosine10_equal_velocity',
     '5周波数 100秒・各速度3.7 cm/s（0.05–0.45 Hz）':LOW_BAND_EQUAL_VELOCITY,
 }
+LABELS.update(BAND_LABELS)
 
 def profile(condition):
+    if condition in BAND_PROFILES:
+        return band_profile(condition)
     if condition == LOW_BAND_EQUAL_VELOCITY:
         from .low_band import LIMITS, check_limits
 

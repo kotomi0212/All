@@ -1,0 +1,28 @@
+{
+  "schema": 8,
+  "waveform": "ap_velocity_log_band_sweep",
+  "condition": "study_sweep100_band2_up",
+  "enabled": true,
+  "duration_s": 100,
+  "onset_s": 10,
+  "sweep_s": 85,
+  "offset_s": 5,
+  "analysis_interval_s": [
+    10,
+    95
+  ],
+  "band": 2,
+  "direction": "up",
+  "start_frequency_hz": 0.1077217345015942,
+  "end_frequency_hz": 0.23207944168063893,
+  "velocity_amplitude_m_s": 0.1,
+  "sample_step_s": 0.001,
+  "initial_phase_rad": 0,
+  "initial_position_m": 0,
+  "hold_final_position": true,
+  "fixation": null,
+  "envelope": "quintic smoothstep velocity envelope; fixed frequency in onset/offset",
+  "phase": "continuous phase; exponential frequency in 10 <= t <= 95 seconds",
+  "position": "trapezoidal integral of velocity at 1 ms; no return to origin",
+  "analysis_note": "Onset/offset excluded; 10-second onset does not establish stationarity"
+}

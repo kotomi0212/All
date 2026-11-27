@@ -1,0 +1,56 @@
+[
+  {
+    "condition": "study_sweep100_band1_up",
+    "start_frequency_hz": 0.05,
+    "end_frequency_hz": 0.1077217345015942,
+    "peak_abs_displacement_m": 0.31830988356579576,
+    "peak_abs_velocity_m_s": 0.09999999994002293,
+    "peak_abs_acceleration_m_s2": 0.0666112786673448,
+    "final_position_m": -0.06132903381041917
+  },
+  {
+    "condition": "study_sweep100_band1_down",
+    "start_frequency_hz": 0.1077217345015942,
+    "end_frequency_hz": 0.05,
+    "peak_abs_displacement_m": 0.35158571612795964,
+    "peak_abs_velocity_m_s": 0.09999999999998785,
+    "peak_abs_acceleration_m_s2": 0.06750317372955957,
+    "final_position_m": 0.19492345446014947
+  },
+  {
+    "condition": "study_sweep100_band2_up",
+    "start_frequency_hz": 0.1077217345015942,
+    "end_frequency_hz": 0.23207944168063893,
+    "peak_abs_displacement_m": 0.20534556755545044,
+    "peak_abs_velocity_m_s": 0.09999999996248375,
+    "peak_abs_acceleration_m_s2": 0.14384986075182069,
+    "final_position_m": -0.03539425884495812
+  },
+  {
+    "condition": "study_sweep100_band2_down",
+    "start_frequency_hz": 0.23207944168063893,
+    "end_frequency_hz": 0.1077217345015942,
+    "peak_abs_displacement_m": 0.14837701023085276,
+    "peak_abs_velocity_m_s": 0.09999999999736557,
+    "peak_abs_acceleration_m_s2": 0.14480586831335993,
+    "final_position_m": 0.07690372284901309
+  },
+  {
+    "condition": "study_sweep100_band3_up",
+    "start_frequency_hz": 0.23207944168063893,
+    "end_frequency_hz": 0.5,
+    "peak_abs_displacement_m": 0.06973032867414634,
+    "peak_abs_velocity_m_s": 0.0999999999997687,
+    "peak_abs_acceleration_m_s2": 0.3141589302938981,
+    "final_position_m": -0.001001587421915333
+  },
+  {
+    "condition": "study_sweep100_band3_down",
+    "start_frequency_hz": 0.5,
+    "end_frequency_hz": 0.23207944168063893,
+    "peak_abs_displacement_m": 0.06809561228241885,
+    "peak_abs_velocity_m_s": 0.09999999983352471,
+    "peak_abs_acceleration_m_s2": 0.3141592653589793,
+    "final_position_m": -0.00024121171774533324
+  }
+]
