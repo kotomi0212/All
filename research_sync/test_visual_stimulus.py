@@ -33,7 +33,7 @@ class VisualStimulusTests(unittest.TestCase):
         self.assertAlmostEqual(maximum['value'],.1,places=10)
         self.assertLessEqual(float(abs(evaluate(np.linspace(0,90,18001),self.c)[1]).max()),.1+1e-10)
         scene=json.loads((ROOT/'scene.json').read_text())
-        self.assertEqual(scene,dict(roomHeightM=3,roomSizeM=6,frontWallDistanceM=3,gridSpacingM=.5))
+        self.assertEqual(scene,dict(roomHeightM=3,roomSizeM=6,frontWallDistanceM=3,gridSpacingM=.5,gridLineWidthM=.005859375))
     def test_python_browser_parity_and_parameter_changes(self):
         alternative=dict(schema=2,waveform='endpoint_stationary_multicosine',duration_s=65,stationary_start_s=5,
             frequencies_hz=[.1,.2],endpoint_phases_rad=[0,np.pi],acceleration_component_m_s2=1)

@@ -18,7 +18,7 @@ from .recording import export_recording
 from .study_stimuli import LABELS
 from websockets.asyncio.server import serve
 
-STATIC={'/train-scene.js','/operator.html','/quest.html','/quest.js','/waveform.js','/fixation.js','/fixation_target.js','/operator.js','/grid.svg','/vendor/aframe.min.js'}
+STATIC={'/train-scene.js','/operator.html','/quest.html','/quest.js','/waveform.js','/fixation.js','/fixation_target.js','/operator.js','/grid.svg','/grid-thick.svg','/vendor/aframe.min.js'}
 
 def vendor_present():
     try:
@@ -52,7 +52,7 @@ async def run(args):
     def record(kind,**data):
         log.write(json.dumps(dict(kind=kind,pc_monotonic_s=time.perf_counter(),pc_epoch_s=time.time(),**data),ensure_ascii=False)+'\n')
     def snapshot():
-        return dict(type='system_status',service_version='pc-acquisition-v6',**state,
+        return dict(type='system_status',service_version='pc-acquisition-v7',**state,
             pc_now_s=time.perf_counter(),quest_connected='quest' in list(peers.values()),
             vendor_enabled=bool(args.vendor_directory),scene=config['scene'],
             busy=trial is not None or capture is not None or bool(finishing))
@@ -165,7 +165,7 @@ async def run(args):
             if role=='quest' and 'quest' in peers.values():await ws.close(1008,'one Quest per session');return
             peers[ws]=role
             if hello.get('subscribe_status'):subscribers.add(ws)
-            if role=='quest':rtts.clear();state.update(sync_probes=0,quest_last_seen_s=time.perf_counter(),quest_software_current=hello.get('client_version')=='pc-control-v6' or args.allow_desktop_simulation)
+            if role=='quest':rtts.clear();state.update(sync_probes=0,quest_last_seen_s=time.perf_counter(),quest_software_current=hello.get('client_version')=='pc-control-v7' or args.allow_desktop_simulation)
             record('connected',role=role)
             await ws.send(json.dumps(dict(type='config',stimulus=config,start_delay_s=args.start_delay,vendor_enabled=bool(args.vendor_directory))))
             async for raw in ws:
@@ -224,7 +224,8 @@ async def run(args):
                     config['eye_height_m']=state['eye_height_m'];config['eye_height_q_s']=state['eye_height_q_s']
                     config['scene']=json.loads((root/'scene.json').read_text(encoding='utf-8'))
                     config['scene']['environment']=environment
-                    if environment=='grid_near':config['scene']['frontWallDistanceM']=1.5
+                    if environment=='grid_near':
+                        config['scene'].update(frontWallDistanceM=1.5,gridLineWidthM=.05)
                     state.update(duration_s=config['duration_s'],condition=condition,environment=environment)
                     await broadcast(dict(type='config',stimulus=config))
                     trial=str(uuid.uuid4());state.update(trial_id=trial,elapsed_s=0.,scheduled_pc_s=None,last_error=None,imu_warning=None)

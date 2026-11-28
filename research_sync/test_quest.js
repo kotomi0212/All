@@ -111,15 +111,23 @@ assert(Math.abs(lastStep.v-(-.063732507942320812))<1e-12);
 assert.deepEqual(waveform.evaluate(301,sweep300),{x:lastStep.x,v:0,a:0});
 console.log('PASS: 300-second sweep matches CSV endpoints and the first integration step');
 
-// Near-wall scene changes the reference distance while preserving room and grid dimensions.
+// The near-wall scene uses the 5 cm texture at the same grid spacing.
 const nearRoom=harness();nearRoom.open();
-nearRoom.deliver({type:'config',stimulus:{...config,scene:{environment:'grid_near',roomSizeM:6,roomHeightM:3,frontWallDistanceM:1.5,gridSpacingM:.5}}});
+const defaultScene=JSON.parse(fs.readFileSync(__dirname+'/scene.json'));
+nearRoom.deliver({type:'config',stimulus:{...config,scene:{...defaultScene,environment:'grid_near',frontWallDistanceM:1.5,gridLineWidthM:.05}}});
 assert.equal(nearRoom.elements['#scene-front'].attributes.position[0],'0 1.5 -1.5');
 assert.equal(nearRoom.elements['#scene-back'].attributes.position[0],'0 1.5 4.5');
 assert.equal(nearRoom.elements['#scene-left'].attributes.position[0],'-3 1.5 1.5');
 assert.equal(nearRoom.elements['#scene-floor'].attributes.width[0],6);
 assert.equal(nearRoom.elements['#scene-front'].attributes.material[1],'12 6');
 assert.equal(nearRoom.messages.findLast(m=>m.type==='setup').wall_distance_m,1.5);
-nearRoom.deliver({type:'config',stimulus:{...config,scene:{environment:'grid',roomSizeM:6,roomHeightM:3,frontWallDistanceM:3,gridSpacingM:.5}}});
+assert.equal(nearRoom.messages.findLast(m=>m.type==='setup').grid_line_width_m,.05);
+for(const plane of ['front','back','left','right','floor','ceiling']){
+ assert.equal(nearRoom.elements['#scene-'+plane].attributes.src[0],'#grid-thick');
+}
+nearRoom.deliver({type:'config',stimulus:{...config,scene:{...defaultScene,environment:'grid'}}});
 assert.equal(nearRoom.elements['#scene-front'].attributes.position[0],'0 1.5 -3');
-console.log('PASS: 1.5 m wall scene preserves room dimensions/grid and switches back to 3 m');
+for(const plane of ['front','back','left','right','floor','ceiling']){
+ assert.equal(nearRoom.elements['#scene-'+plane].attributes.src[0],'#grid-standard');
+}
+console.log('PASS: 1.5 m wall uses the 5 cm texture on all six surfaces and switches back to standard');

@@ -20,12 +20,14 @@ function ready(){return !!config&&ws?.readyState===1&&now()-lastPong<2&&model()!
 function applyScene(s={roomHeightM:3,roomSizeM:6,frontWallDistanceM:3,gridSpacingM:.5}){
   window.TrainScene?.select(s.environment||'grid');
   const w=s.roomSizeM,h=s.roomHeightM,d=s.frontWallDistanceM,g=s.gridSpacingM,z=w/2-d;
+  const texture=s.gridLineWidthM===.05?'#grid-thick':'#grid-standard';
   for(const [id,width,height,position,rotation] of [
     ['front',w,h,`0 ${h/2} ${-d}`,'0 0 0'],['back',w,h,`0 ${h/2} ${w-d}`,'0 180 0'],
     ['left',w,h,`${-w/2} ${h/2} ${z}`,'0 90 0'],['right',w,h,`${w/2} ${h/2} ${z}`,'0 -90 0'],
     ['floor',w,w,`0 0 ${z}`,'-90 0 0'],['ceiling',w,w,`0 ${h} ${z}`,'90 0 0']]){
     const el=document.querySelector('#scene-'+id);if(!el)continue;
     el.setAttribute('width',width);el.setAttribute('height',height);el.setAttribute('position',position);el.setAttribute('rotation',rotation);
+    el.setAttribute('src',texture);
     el.setAttribute('material','repeat',`${width/g} ${height/g}`);
   }
 }
@@ -80,7 +82,7 @@ function onMessage(event){
     config=m.stimulus;applyScene(config.scene);
     if(['ap_velocity_log_downsweep','ap_velocity_log_band_sweep'].includes(config.waveform))ResearchWaveform.evaluate(0,config);
     window.FixationTarget?.configure(scene(),config.fixation);
-    send({type:'setup',q_s:now(),reference:'fixed local-floor origin',ap_positive:'world -Z',wall_distance_m:config.scene?.frontWallDistanceM??3,wall_width_m:config.scene?.roomSizeM??6,wall_height_m:config.scene?.roomHeightM??3,grid_spacing_m:config.scene?.gridSpacingM??.5,alignment_required:false});
+    send({type:'setup',q_s:now(),reference:'fixed local-floor origin',ap_positive:'world -Z',wall_distance_m:config.scene?.frontWallDistanceM??3,wall_width_m:config.scene?.roomSizeM??6,wall_height_m:config.scene?.roomHeightM??3,grid_spacing_m:config.scene?.gridSpacingM??.5,grid_line_width_m:config.scene?.gridLineWidthM??.005859375,alignment_required:false});
     if(pendingEnded){send(pendingEnded);pendingEnded=null;}
   }
   if(m.type==='capture_height'){
@@ -113,7 +115,7 @@ function connect(){
   const socket=new WebSocket(url);ws=socket;probes.length=0;lastPong=-Infinity;config=null;
   socket.onopen=()=>{
     if(ws!==socket)return;attempt=0;
-    send({role:'quest',token,user_agent:navigator.userAgent,client_version:'pc-control-v6'});
+    send({role:'quest',token,user_agent:navigator.userAgent,client_version:'pc-control-v7'});
     send({type:'capabilities',secure_context:window.isSecureContext,xr_available:!!navigator.xr,user_agent:navigator.userAgent});ui(true);
   };
   socket.onmessage=e=>{if(ws===socket)onMessage(e);};

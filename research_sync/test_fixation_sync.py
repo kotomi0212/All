@@ -28,7 +28,7 @@ class FixationSyncTests(unittest.IsolatedAsyncioTestCase):
                     except OSError:await asyncio.sleep(.1)
                 else:self.fail('Server did not start')
                 async with quest:
-                    await quest.send(json.dumps(dict(role='quest',token='test',client_version='pc-control-v6')))
+                    await quest.send(json.dumps(dict(role='quest',token='test',client_version='pc-control-v7')))
                     await receive(quest,'config')
                     async with connect(f'ws://127.0.0.1:{ws}') as operator:
                         await operator.send(json.dumps(dict(role='operator',token='test')));await receive(operator,'config')
@@ -42,10 +42,14 @@ class FixationSyncTests(unittest.IsolatedAsyncioTestCase):
                         self.assertIn('上限', (await receive(operator,'error'))['message'])
                         from .band_sweeps import PROFILES as BAND_PROFILES
                         for condition in ('dot','none','spinner','multicosine','pilot_single_x1','pilot_single_x3','pilot_five_x1','pilot_five_x1p4','pilot_rest','study_multicosine10',*BAND_PROFILES):
-                            await operator.send(json.dumps(dict(type='start',condition=condition,start_delay_s=3,participant=dict(subject='A',height_cm=170,trial_number=5))))
+                            environment='grid_near' if condition=='pilot_rest' else 'grid'
+                            await operator.send(json.dumps(dict(type='start',condition=condition,environment=environment,start_delay_s=3,participant=dict(subject='A',height_cm=170,trial_number=5))))
                             config=(await receive(quest,'config'))['stimulus'];command=await receive(quest,'start');identifier=command['trial_id']
                             self.assertEqual(config['condition'],condition)
                             self.assertEqual(config['eye_height_m'],1.55)
+                            self.assertEqual(config['scene']['frontWallDistanceM'],1.5 if environment=='grid_near' else 3)
+                            self.assertEqual(config['scene']['gridSpacingM'],.5)
+                            self.assertEqual(config['scene']['gridLineWidthM'],.05 if environment=='grid_near' else .005859375)
                             await operator.send(json.dumps(dict(type='capture_height')))
                             await receive(operator,'error')
                             expected_duration = 300 if condition == 'study_sweep300' else (
@@ -64,6 +68,7 @@ class FixationSyncTests(unittest.IsolatedAsyncioTestCase):
                             directory=output/'trials'/identifier
                             meta=json.loads((directory/'metadata.json').read_text(encoding='utf-8'))
                             self.assertEqual(meta['participant'],dict(subject='A',height_cm=170.,trial_number=5));self.assertEqual(meta['stimulus'],config);self.assertIsNotNone(meta['quest_clock'])
+                            self.assertEqual(meta['scene'],config['scene'])
                             with (directory/'quest.csv').open(encoding='utf-8-sig') as stream:row=next(csv.DictReader(stream))
                             self.assertEqual(row['visual_condition'],condition);self.assertNotEqual(row['pc_mapped_time_s'],'')
                             if condition in ('dot','spinner'):self.assertEqual(float(row['fixation_anchor_y_m']),1.55)

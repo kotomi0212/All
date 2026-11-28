@@ -30,14 +30,16 @@ def export_recording(events,trial_id,output,raw_directory=None,reason='unknown')
     with (output/'clock_probes.csv').open('x',encoding='utf-8-sig',newline='') as stream:
         writer=csv.writer(stream);writer.writerow(['trial_id','quest_send_s','pc_receive_s','pc_send_s','quest_receive_s'])
         writer.writerows([trial_id,*[p[k] for k in ('q1','p2','p3','q4')]] for p in probes)
+    session_stimulus=next(r['stimulus'] for r in records if r['kind']=='session')
+    commands=[r for r in records if r.get('trial_id')==trial_id and r['kind'] in ('command_start','command_stop')]
+    stimulus=next((c['stimulus'] for c in commands if c['kind']=='command_start' and 'stimulus' in c),session_stimulus)
     summary=dict(trial_id=trial_id,termination=reason,quest_frames=len(frames),quest_clock=model,
-        pc_time_basis='Windows QPC / Python perf_counter seconds',scene=next(r['stimulus'].get('scene') for r in records if r['kind']=='session'),
+        pc_time_basis='Windows QPC / Python perf_counter seconds',scene=stimulus.get('scene',session_stimulus.get('scene')),
         processing='Acquisition CSV export only; no filters, COM or FRF',
         events_file=str(Path(events).resolve()),combalance_samples=0,
         timing_validation='Quest clock mapped to PC. Force samples retain PC receipt times; acquisition latency not independently calibrated.')
-    commands=[r for r in records if r.get('trial_id')==trial_id and r['kind'] in ('command_start','command_stop')]
     summary['pc_commands']=commands
-    summary['stimulus']=next((c['stimulus'] for c in commands if c['kind']=='command_start' and 'stimulus' in c),next(r['stimulus'] for r in records if r['kind']=='session'))
+    summary['stimulus']=stimulus
     summary['participant']=next((c.get('participant') for c in commands if c['kind']=='command_start'),None)
     if raw_directory is not None:
         raw_directory=Path(raw_directory);parameter_path=raw_directory/'device_parameters.json';raw_path=raw_directory/'raw_blocks.jsonl'

@@ -5,10 +5,10 @@
 <p>初回だけQuestでVRボタンを押してください。試行の操作はこのPCで行えます。</p>
 <label>開始までの待ち時間 <input id="delay" type="number" min="3" max="30" value="10" style="width:70px">秒</label>
 <p><label>刺激 <select id="condition"><!--STIMULUS_OPTIONS--></select></label></p>
-<p><label>情景 <select id="environment"><option value="grid">従来の格子室</option><option value="grid_near">格子室（正面壁まで1.5 m）</option><option value="train">電車の車窓（景色の自動スクロールなし）</option></select></label></p>
+<p><label>情景 <select id="environment"><option value="grid">従来の格子室</option><option value="grid_near">格子室（正面壁まで1.5 m・線幅5 cm）</option><option value="train">電車の車窓（景色の自動スクロールなし）</option></select></label></p>
 <button id="start" disabled>選択した試行を予約</button><button id="stop" disabled>停止</button>
 <div id="status">接続中…</div><progress id="progress" max="90" value="0"></progress>
-<p>幅6 m・奥行6 m・高さ3 m ／ 正面壁まで3 m ／ 格子50 cm</p>
+<p>格子室の寸法は幅6 m・奥行6 m・高さ3 m、格子間隔は50 cm</p>
 <div id="save">CSV保存先を確認中…</div><p id="message"></p>
 <p class="note">CSVには生データ、Quest時計とPC対応時刻、ComBalanceのPC受信時刻を保存します。センサ取得遅延・実発光遅延は未校正です。解析は実行しません。</p>
 <script src="operator.js"></script></body></html>

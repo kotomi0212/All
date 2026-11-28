@@ -20,6 +20,7 @@ ROOT=Path(__file__).resolve().parent
 VENDOR=Path(r'C:\Program Files (x86)\テック技販\コムバランス制御ソフトウェア')
 ADB=Path(r'C:\Program Files\Meta Quest Developer Hub\resources\bin\adb.exe')
 HIDDEN=getattr(subprocess,'CREATE_NO_WINDOW',0)
+NEAR_GRID_LABEL='格子室（正面壁まで1.5 m・線幅5 cm）'
 
 class ControlApp:
     def __init__(self,root):
@@ -53,7 +54,7 @@ class ControlApp:
         self.condition_box.pack(anchor='w');self.condition_box.bind('<<ComboboxSelected>>',lambda e:self.start_button.configure(text='選択した試行を予約'))
         self.environment=tk.StringVar(value='従来の格子室')
         ttk.Label(frame,text='情景').pack(anchor='w')
-        self.environment_box=ttk.Combobox(frame,textvariable=self.environment,values=['従来の格子室','格子室（正面壁まで1.5 m）','電車の車窓（景色の自動スクロールなし）'],state='readonly',width=56)
+        self.environment_box=ttk.Combobox(frame,textvariable=self.environment,values=['従来の格子室',NEAR_GRID_LABEL,'電車の車窓（景色の自動スクロールなし）'],state='readonly',width=56)
         self.environment_box.pack(anchor='w')
         height_row=ttk.Frame(frame);height_row.pack(fill='x',pady=5)
         self.height_button=ttk.Button(height_row,text='目線高さを取得し直す',command=lambda:self.submit(self.command(dict(type='capture_height'))),state='disabled')
@@ -70,7 +71,7 @@ class ControlApp:
         ttk.Label(frame,textvariable=self.phase,font=('Yu Gothic UI',15),wraplength=900,padding=(0,12)).pack(anchor='w')
         self.progress=ttk.Progressbar(frame,maximum=90);self.progress.pack(fill='x',pady=6)
         self.trial=tk.StringVar(value='試行: —');ttk.Label(frame,textvariable=self.trial).pack(anchor='w',pady=5)
-        ttk.Label(frame,text='格子室: 幅6 m・奥行6 m・高さ3 m ／ 正面壁まで3 m・1.5 mを情景で選択 ／ グリッド50 cm').pack(anchor='w',pady=8)
+        ttk.Label(frame,text='格子室の寸法は幅6 m・奥行6 m・高さ3 m、格子間隔は50 cm').pack(anchor='w',pady=8)
         save=ttk.LabelFrame(frame,text='保存先（接続中は固定）',padding=12);save.pack(fill='x',pady=12)
         self.save_root=tk.StringVar(value=str(ROOT/'recordings'));ttk.Entry(save,textvariable=self.save_root,state='readonly').pack(side='left',fill='x',expand=True)
         self.folder_button=ttk.Button(save,text='変更',command=self.choose_folder);self.folder_button.pack(side='left',padx=5)
@@ -131,7 +132,7 @@ class ControlApp:
                     try:info=await asyncio.to_thread(self.api);break
                     except Exception:continue
                 else:raise TimeoutError('計測サーバーの起動が確認できません')
-            if info['status'].get('service_version')!='pc-acquisition-v6':raise RuntimeError('古い計測サーバーが起動しています。旧計測ソフトを終了し、このソフトで再接続してください')
+            if info['status'].get('service_version')!='pc-acquisition-v7':raise RuntimeError('古い計測サーバーが起動しています。旧計測ソフトを終了し、このソフトで再接続してください')
             if not info['status']['vendor_enabled']:raise RuntimeError('このサーバーはComBalance実機取得が無効です')
             if self.connection_task is None or self.connection_task.done():self.connection_task=asyncio.create_task(self.connection_loop())
             self.events.put(('prepared',None))
@@ -160,7 +161,7 @@ class ControlApp:
             participant=participant_info(dict(subject=self.subject.get(),height_cm=self.height_cm.get(),trial_number=self.trial_number.get()))
             delay=float(self.delay.get())
             if not 3<=delay<=30:raise ValueError('待ち時間は3～30秒にしてください')
-            self.start_button['state']='disabled';self.submit(self.command(dict(type='start',start_delay_s=delay,condition=self.conditions[self.condition.get()],environment='train' if self.environment.get().startswith('電車') else ('grid_near' if self.environment.get()=='格子室（正面壁まで1.5 m）' else 'grid'),participant=participant)))
+            self.start_button['state']='disabled';self.submit(self.command(dict(type='start',start_delay_s=delay,condition=self.conditions[self.condition.get()],environment='train' if self.environment.get().startswith('電車') else ('grid_near' if self.environment.get()==NEAR_GRID_LABEL else 'grid'),participant=participant)))
         except Exception as error:messagebox.showerror('開始できません',str(error))
     def stop(self):self.submit(self.command(dict(type='stop')))
     def show_status(self,s):
